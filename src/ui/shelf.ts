@@ -6,7 +6,12 @@ import { getShelfIngredients, canAddIngredient } from '../state/game-state.ts';
 export function renderIngredientIcon(ingredient: Ingredient): string {
   return `<svg class="ingredient-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><use href="${import.meta.env.BASE_URL}assets/ingredients.svg#${ingredient.icon}"></use></svg>`;
 }
-const signed = (value: number) => (value > 0 ? `+${value}` : String(value));
+const signed = (value: number) =>
+  value > 0 ? `+${value}` : value < 0 ? `−${Math.abs(value)}` : '0';
+
+export function renderIngredientStats(ingredient: Ingredient): string {
+  return `<span class="ingredient-card-stats"><span>Temperature <strong>${signed(ingredient.temperature)}</strong></span><span>Density <strong>${signed(ingredient.density)}</strong></span><span>Magic Power <strong>${signed(ingredient.magicPower)}</strong></span></span>`;
+}
 
 export function renderShelf(state: GameState, side: 0 | 1): string {
   const full =
@@ -20,7 +25,7 @@ export function renderShelf(state: GameState, side: 0 | 1): string {
       const stock = state.shelfStock[ingredient.id];
       const empty = stock === 0;
       return `<button class="ingredient-card${empty ? ' ingredient-card-empty' : ''}" type="button" data-ingredient="${ingredient.id}" draggable="${canAddIngredient(state, ingredient.id)}" ${empty || full || state.status !== 'playing' ? 'disabled' : ''} aria-label="${ingredient.name}${empty ? ', out of stock' : ''}">
-      ${empty ? '' : `<span class="ingredient-card-heading">${renderIngredientIcon(ingredient)}<span>${ingredient.name}</span></span><span class="ingredient-card-stats"><span>Temperature <strong>${signed(ingredient.temperature)}</strong></span><span>Density <strong>${signed(ingredient.density)}</strong></span><span>Magic Power <strong>${signed(ingredient.magicPower)}</strong></span></span>`}
+      ${empty ? '' : `<span class="ingredient-card-heading">${renderIngredientIcon(ingredient)}<span>${ingredient.name}</span></span>${state.difficulty === 'hard' ? '' : renderIngredientStats(ingredient)}`}
       <span class="stock-badge" aria-label="Stock ${stock}">${stock}</span>
     </button>`;
     })

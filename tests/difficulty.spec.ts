@@ -42,9 +42,15 @@ for (const [difficulty, count, capacity, time, lives, firstRecipe] of [
         )
         .toBe(true);
       for (const card of await page.locator('.ingredient-card').all()) {
-        await expect(card.locator('.ingredient-card-stats')).toContainText(
-          'Magic Power',
-        );
+        if (difficulty === 'Hard') {
+          await expect(card.locator('.ingredient-card-stats')).toHaveCount(0);
+          await card.focus();
+          await expect(page.getByRole('tooltip')).toContainText('Magic Power');
+        } else {
+          await expect(card.locator('.ingredient-card-stats')).toContainText(
+            'Magic Power',
+          );
+        }
         expect(
           await card.evaluate((el) => el.scrollWidth <= el.clientWidth),
         ).toBe(true);

@@ -1,4 +1,5 @@
 import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
+import { bindIngredientTooltip } from '../ui/ingredient-tooltip.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import {
@@ -42,6 +43,10 @@ export function mountGame(root: HTMLElement): () => void {
   const startContent = [...primary.childNodes];
   const screen = get('.start-screen');
   const menuButton = get<HTMLButtonElement>('.circular-control-menu');
+  const tooltip = bindIngredientTooltip(
+    root,
+    () => state?.status === 'playing' && state.difficulty === 'hard',
+  );
 
   const drag = bindIngredientDrag(root, {
     canAdd: (id) => state !== null && canAddIngredient(state, id),
@@ -69,6 +74,7 @@ export function mountGame(root: HTMLElement): () => void {
   }
 
   function render(): void {
+    tooltip.reset();
     drag.reset();
     if (!state) return;
     get('.slot-group-left').innerHTML = renderShelf(state, 0);
@@ -223,6 +229,7 @@ export function mountGame(root: HTMLElement): () => void {
   }
 
   function exit(): void {
+    tooltip.reset();
     drag.reset();
     clearSave();
     concealField(false);
@@ -370,6 +377,7 @@ export function mountGame(root: HTMLElement): () => void {
     abort.abort();
     results.dispose();
     drag.dispose();
+    tooltip.dispose();
     root.querySelector('#game-over-dialog')?.remove();
     root.querySelector('#pause-dialog')?.remove();
   };
