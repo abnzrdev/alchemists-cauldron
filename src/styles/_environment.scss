@@ -17,6 +17,16 @@
   box-shadow: tokens.$arch-shadow;
 }
 
+.workshop-arch::before {
+  content: '';
+  position: absolute;
+  inset: 8% 8% 20%;
+  border: 1px solid tokens.$ornate-inset;
+  border-radius: tokens.$radius-round;
+  background: tokens.$alchemy-ring-surface;
+  opacity: 0.65;
+}
+
 .workshop-column {
   position: absolute;
   top: 0;
