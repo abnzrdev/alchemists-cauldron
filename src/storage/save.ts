@@ -1,11 +1,11 @@
-﻿import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty';
-import type { Difficulty } from '../data/difficulty';
+﻿import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
+import type { Difficulty } from '../data/difficulty.ts';
 import {
   isRecord,
   readStoredJson,
   removeStoredValue,
   writeStoredJson,
-} from './localStorage';
+} from './localStorage.ts';
 
 export const SAVE_KEY = 'alchemists-cauldron:save';
 const DIFFICULTY_KEY = 'alchemists-cauldron:difficulty';

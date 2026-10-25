@@ -1,3 +1,7 @@
+import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
+import type { Difficulty } from '../data/difficulty.ts';
+import { loadDifficulty } from '../storage/save.ts';
+import type { StartGameRequest } from '../ui/menu.ts';
 import { mountResultEntry } from '../ui/result-entry.ts';
 import { pauseGame, resumeGame } from './pause.ts';
 import { renderPause } from '../ui/pause.ts';
@@ -14,7 +18,7 @@ import {
   renderShelf,
 } from '../ui/shelf.ts';
 
-export function mountLevelOne(root: HTMLElement): () => void {
+export function mountGame(root: HTMLElement): () => void {
   let state: GameState | null = null;
   const abort = new AbortController();
   let clock: RunClock | null = null;
@@ -34,7 +38,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
   function render(): void {
     if (!state) return;
     get('.slot-group-left').innerHTML = renderShelf(state, 0);
-    get('.slot-group-right').innerHTML = renderShelf(state, 3);
+    get('.slot-group-right').innerHTML = renderShelf(state, 1);
     get('.cauldron-content').innerHTML = state.cauldronIngredients
       .map(renderIngredientIcon)
       .join('');
@@ -51,7 +55,8 @@ export function mountLevelOne(root: HTMLElement): () => void {
     panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}`;
     get('#game-score').textContent = String(state.score);
     updateTime();
-    get('#game-lives').textContent = `Lives: ${state.lives} / 3`;
+    get('#game-lives').textContent =
+      `Lives: ${state.lives} / ${DIFFICULTY_SETTINGS[state.difficulty].lives}`;
     get<HTMLButtonElement>('[data-action="brew"]').disabled =
       !state.cauldronIngredients.length || state.status !== 'playing';
     updateParameterBars(root, state);
@@ -80,7 +85,8 @@ export function mountLevelOne(root: HTMLElement): () => void {
         .forEach((open) => open.close());
       get('#game-over-reason').textContent = reason;
       get('#final-score').textContent = String(state.score);
-      results.prepare(state.score);
+      results.prepare(state.score, state.difficulty);
+      dialog.dataset.difficulty = state.difficulty;
       dialog.showModal();
     }
     return true;
@@ -131,7 +137,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
     get<HTMLButtonElement>('[data-action="pause"]').focus();
   }
 
-  function start(): void {
+  function start(difficulty: Difficulty = loadDifficulty()): void {
     concealField(false);
     clearInterval(timer);
     root
@@ -139,11 +145,12 @@ export function mountLevelOne(root: HTMLElement): () => void {
       .forEach((dialog) => dialog.close());
     root.querySelector('.recipe-panel')?.remove();
     root.querySelector('#time-progress')?.remove();
-    state = createGame();
+    state = createGame(Math.random, difficulty);
+    screen.classList.toggle('is-hard', difficulty === 'hard');
     clock = new RunClock(state.timeLeft);
     get('#game-time').parentElement?.insertAdjacentHTML(
       'beforeend',
-      '<progress id="time-progress" class="time-progress" max="150" value="150" aria-label="Remaining time"></progress>',
+      `<progress id="time-progress" class="time-progress" max="${DIFFICULTY_SETTINGS[difficulty].startTime}" value="${state.timeLeft}" aria-label="Remaining time"></progress>`,
     );
     timer = setInterval(tick, 100);
     screen.classList.add('is-running');
@@ -167,7 +174,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
       .closest('.counter-details')
       ?.classList.remove('timer-urgent');
     state = null;
-    screen.classList.remove('is-running');
+    screen.classList.remove('is-running', 'is-hard');
     menuButton.disabled = false;
     get('.slot-group-left').innerHTML = renderEmptySlots(1);
     get('.slot-group-right').innerHTML = renderEmptySlots(4);
@@ -177,9 +184,18 @@ export function mountLevelOne(root: HTMLElement): () => void {
     get('#game-score').textContent = '0';
     primary.replaceChildren(...startContent);
     get<HTMLButtonElement>('#start-game').focus();
+    root.dispatchEvent(new Event('game:exit'));
   }
 
-  root.addEventListener('game:start', start, { signal: abort.signal });
+  root.addEventListener(
+    'game:start',
+    (event) => {
+      if (state?.status === 'playing' || state?.status === 'paused') return;
+      const detail = (event as CustomEvent<StartGameRequest>).detail;
+      if (isDifficulty(detail?.difficulty)) start(detail.difficulty);
+    },
+    { signal: abort.signal },
+  );
   root.addEventListener(
     'click',
     (event) => {
@@ -202,7 +218,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
         pause(false);
       }
       if (button.dataset.action === 'play-again') {
-        start();
+        start(state?.difficulty);
         return;
       }
       if (button.dataset.action === 'exit-run') {
@@ -220,7 +236,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
         render();
         get('#brew-feedback').textContent =
           outcome.result === 'success'
-            ? 'Potion brewed! +200 points and +10 seconds (maximum 150).'
+            ? `Potion brewed! +${DIFFICULTY_SETTINGS[state.difficulty].scorePerBrew} points and +${DIFFICULTY_SETTINGS[state.difficulty].timeBonus} seconds (maximum ${DIFFICULTY_SETTINGS[state.difficulty].startTime}).`
             : state.lives
               ? 'The brew failed. One life lost. Try a new mixture.'
               : 'No lives remain. Return to the menu to start again.';

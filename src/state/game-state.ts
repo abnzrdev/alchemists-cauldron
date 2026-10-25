@@ -2,13 +2,14 @@
 import type { Recipe } from '../data/recipes.ts';
 import { INGREDIENTS } from '../data/ingredients.ts';
 import type { Ingredient } from '../data/ingredients.ts';
-import { LEVEL_ONE_SETTINGS } from '../data/levelOne.ts';
+import { DIFFICULTY_SETTINGS } from '../data/difficulty.ts';
+import type { Difficulty } from '../data/difficulty.ts';
 import { createStock } from '../logic/stock.ts';
 
 export interface GameState {
   activeRecipe: Recipe;
   status: 'playing' | 'paused' | 'game-over';
-  difficulty: 'medium';
+  difficulty: Difficulty;
   score: number;
   timeLeft: number;
   lives: number;
@@ -16,20 +17,21 @@ export interface GameState {
   cauldronIngredients: Ingredient[];
 }
 
-export const LEVEL_ONE_INGREDIENTS = INGREDIENTS.slice(
-  0,
-  LEVEL_ONE_SETTINGS.shelfSize,
-);
+export const getShelfIngredients = (difficulty: Difficulty) =>
+  INGREDIENTS.slice(0, DIFFICULTY_SETTINGS[difficulty].shelfSize);
 
-export function createGame(random: () => number = Math.random): GameState {
+export function createGame(
+  random: () => number = Math.random,
+  difficulty: Difficulty = 'medium',
+): GameState {
   return {
-    activeRecipe: pickRecipe('medium', random),
+    activeRecipe: pickRecipe(difficulty, random),
     status: 'playing',
-    difficulty: 'medium',
+    difficulty,
     score: 0,
-    timeLeft: LEVEL_ONE_SETTINGS.startTime,
-    lives: LEVEL_ONE_SETTINGS.lives,
-    shelfStock: createStock(LEVEL_ONE_INGREDIENTS, random),
+    timeLeft: DIFFICULTY_SETTINGS[difficulty].startTime,
+    lives: DIFFICULTY_SETTINGS[difficulty].lives,
+    shelfStock: createStock(getShelfIngredients(difficulty), random),
     cauldronIngredients: [],
   };
 }
@@ -37,11 +39,14 @@ export function createGame(random: () => number = Math.random): GameState {
 export function addIngredient(state: GameState, id: string): GameState {
   if (
     state.status !== 'playing' ||
-    state.cauldronIngredients.length >= LEVEL_ONE_SETTINGS.cauldronLimit ||
+    state.cauldronIngredients.length >=
+      DIFFICULTY_SETTINGS[state.difficulty].cauldronLimit ||
     !(state.shelfStock[id] > 0)
   )
     return state;
-  const ingredient = LEVEL_ONE_INGREDIENTS.find((item) => item.id === id);
+  const ingredient = getShelfIngredients(state.difficulty).find(
+    (item) => item.id === id,
+  );
   if (!ingredient) return state;
   return {
     ...state,

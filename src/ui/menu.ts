@@ -1,5 +1,6 @@
-import { LEVEL_ONE_SETTINGS } from '../data/levelOne';
-import type { DifficultySettings } from '../data/difficulty';
+import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
+import { loadDifficulty, saveDifficulty } from '../storage/save.ts';
+import type { Difficulty, DifficultySettings } from '../data/difficulty';
 import {
   clearLeaderboard,
   formatResultDate,
@@ -7,12 +8,15 @@ import {
 } from '../storage/leaderboard';
 export interface StartGameRequest {
   mode: 'new';
-  difficulty: 'medium';
+  difficulty: Difficulty;
   settings: DifficultySettings;
 }
 export function bindStartScreen(root: HTMLElement): () => void {
   const abort = new AbortController();
   const { signal } = abort;
+  let difficulty = loadDifficulty();
+  let filter: Difficulty = difficulty;
+  const running = () => Boolean(root.querySelector('.is-running'));
   let trigger: HTMLElement | null = null;
   let returnDialog: HTMLDialogElement | null = null;
   const get = <T extends HTMLElement>(selector: string): T => {
@@ -21,16 +25,25 @@ export function bindStartScreen(root: HTMLElement): () => void {
     return el;
   };
   function refreshMenu(): void {
-    const rules = LEVEL_ONE_SETTINGS;
+    const rules = DIFFICULTY_SETTINGS[difficulty];
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-difficulty]')
+      .forEach((button) => {
+        button.disabled = running();
+        button.setAttribute(
+          'aria-pressed',
+          String(button.dataset.difficulty === difficulty),
+        );
+      });
     get('#difficulty-summary').textContent =
       `${rules.shelfSize} ingredients | Up to ${rules.cauldronLimit} per mix | ${rules.startTime} seconds | ${rules.lives} lives`;
     get('#difficulty-details').textContent =
       `Tolerance +/-${rules.tolerance} | ${rules.scorePerBrew} points per brew | +${rules.timeBonus}s bonus | No reactions`;
     get('#resume-summary').textContent =
-      'Level 1 uses Medium. Difficulty selection and saved-run continuation arrive in Level 2.';
+      'Choose your difficulty before starting. Saved-run continuation follows in US 2.2.';
   }
   function refreshLeaderboard(): void {
-    const entries = loadLeaderboard();
+    const entries = loadLeaderboard(filter);
     const body = get<HTMLTableSectionElement>('#leaderboard-rows');
     body.replaceChildren();
     entries.forEach((entry, index) => {
@@ -39,6 +52,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
         String(index + 1),
         entry.name,
         String(entry.score),
+        DIFFICULTY_SETTINGS[filter].label,
         formatResultDate(entry.date),
       ].forEach((value) => {
         const cell = document.createElement('td');
@@ -47,7 +61,8 @@ export function bindStartScreen(root: HTMLElement): () => void {
       });
       body.append(row);
     });
-    get('#leaderboard-caption').textContent = 'Level 1 | Top 10';
+    get('#leaderboard-caption').textContent =
+      `${DIFFICULTY_SETTINGS[filter].label} | Top 10`;
     get('#leaderboard-empty').hidden = entries.length > 0;
     get('.leaderboard-scroll').hidden = !entries.length;
     get<HTMLButtonElement>('[data-action="clear-leaderboard"]').hidden =
@@ -66,6 +81,9 @@ export function bindStartScreen(root: HTMLElement): () => void {
         ? root.querySelector<HTMLDialogElement>('#game-over-dialog[open]')
         : null;
     if (name === 'leaderboard') {
+      const runDifficulty = returnDialog?.dataset.difficulty;
+      filter = isDifficulty(runDifficulty) ? runDifficulty : difficulty;
+      get<HTMLSelectElement>('#leaderboard-difficulty').value = filter;
       get('#leaderboard-status').textContent = '';
       refreshLeaderboard();
     }
@@ -76,6 +94,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
     dialog.showModal();
   }
   function requestNewGame(): void {
+    if (running()) return;
     returnDialog = null;
     root
       .querySelectorAll<HTMLDialogElement>('dialog[open]')
@@ -85,8 +104,8 @@ export function bindStartScreen(root: HTMLElement): () => void {
         bubbles: true,
         detail: {
           mode: 'new',
-          difficulty: 'medium',
-          settings: { ...LEVEL_ONE_SETTINGS },
+          difficulty,
+          settings: { ...DIFFICULTY_SETTINGS[difficulty] },
         },
       }),
     );
@@ -100,6 +119,11 @@ export function bindStartScreen(root: HTMLElement): () => void {
           : null;
       if (!button || button.disabled) return;
       if (button.dataset.dialog) openDialog(button.dataset.dialog);
+      if (isDifficulty(button.dataset.difficulty) && !running()) {
+        difficulty = button.dataset.difficulty;
+        saveDifficulty(difficulty);
+        refreshMenu();
+      }
       if (button.id === 'start-game' || button.dataset.action === 'new-game')
         requestNewGame();
       if (button.dataset.action === 'clear-leaderboard') {
@@ -109,7 +133,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
       if (button.dataset.action === 'cancel-clear')
         get<HTMLDialogElement>('#clear-confirmation').close();
       if (button.dataset.action === 'confirm-clear') {
-        const cleared = clearLeaderboard();
+        const cleared = clearLeaderboard(filter);
         get<HTMLDialogElement>('#clear-confirmation').close();
         refreshLeaderboard();
         get('#leaderboard-status').textContent = cleared
@@ -143,6 +167,18 @@ export function bindStartScreen(root: HTMLElement): () => void {
     ),
   );
   window.addEventListener('storage', refreshLeaderboard, { signal });
+  get<HTMLSelectElement>('#leaderboard-difficulty').addEventListener(
+    'change',
+    (event) => {
+      const value = (event.target as HTMLSelectElement).value;
+      if (isDifficulty(value)) {
+        filter = value;
+        refreshLeaderboard();
+      }
+    },
+    { signal },
+  );
+  root.addEventListener('game:exit', refreshMenu, { signal });
   refreshMenu();
   return () => abort.abort();
 }
