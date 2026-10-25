@@ -18,11 +18,11 @@ export function calculateCauldron(
 export function inRange(value: number, range: Range, tolerance = 0): boolean {
   return value >= range.min - tolerance && value <= range.max + tolerance;
 }
-// Symmetric domains cover every possible Medium mixture (including four repeats).
+// Symmetric domains cover all possible Hard mixtures, including five repeats.
 export const BAR_LIMITS: CauldronValues = {
-  temperature: 100,
-  density: 80,
-  magicPower: 160,
+  temperature: 250,
+  density: 150,
+  magicPower: 200,
 };
 export function barPosition(value: number, limit: number): number {
   return ((value + limit) / (2 * limit)) * 100;
