@@ -5,7 +5,7 @@ test('recipe, successful and failed brewing, counter and spent stock', async ({
   await page.addInitScript(() => {
     Math.random = () => 0;
   });
-  await page.goto('/');
+  await page.goto('./');
   await expect(
     page.getByRole('button', { name: 'Brew', exact: true }),
   ).toHaveCount(0);

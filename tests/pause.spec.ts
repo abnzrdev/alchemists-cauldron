@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     Math.random = () => 0;
   });
-  await page.goto('/');
+  await page.goto('./');
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
 });
 test('pause freezes time, blocks play, resume preserves stock and mixture, exit resets screen', async ({

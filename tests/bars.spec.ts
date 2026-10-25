@@ -5,7 +5,7 @@ test('bars start at zero, update existing markers smoothly, support negative sum
   await page.addInitScript(() => {
     Math.random = () => 0;
   });
-  await page.goto('/');
+  await page.goto('./');
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
   const meters = page.getByRole('meter');
   await expect(meters).toHaveCount(3);

@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     Math.random = () => 0;
   });
-  await page.goto('/');
+  await page.goto('./');
 });
 test('empty start, readable active shelf, spending, order, capacity and fresh restart', async ({
   page,
