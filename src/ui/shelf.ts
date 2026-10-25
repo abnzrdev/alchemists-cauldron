@@ -1,17 +1,21 @@
 ﻿import type { Ingredient } from '../data/ingredients.ts';
-import { LEVEL_ONE_SETTINGS } from '../data/levelOne.ts';
+import { DIFFICULTY_SETTINGS } from '../data/difficulty.ts';
 import type { GameState } from '../state/game-state.ts';
-import { LEVEL_ONE_INGREDIENTS } from '../state/game-state.ts';
+import { getShelfIngredients } from '../state/game-state.ts';
 
 export function renderIngredientIcon(ingredient: Ingredient): string {
   return `<svg class="ingredient-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><use href="${import.meta.env.BASE_URL}assets/ingredients.svg#${ingredient.icon}"></use></svg>`;
 }
 const signed = (value: number) => (value > 0 ? `+${value}` : String(value));
 
-export function renderShelf(state: GameState, offset: number): string {
+export function renderShelf(state: GameState, side: 0 | 1): string {
   const full =
-    state.cauldronIngredients.length >= LEVEL_ONE_SETTINGS.cauldronLimit;
-  return LEVEL_ONE_INGREDIENTS.slice(offset, offset + 3)
+    state.cauldronIngredients.length >=
+    DIFFICULTY_SETTINGS[state.difficulty].cauldronLimit;
+  const ingredients = getShelfIngredients(state.difficulty);
+  const half = ingredients.length / 2;
+  return ingredients
+    .slice(side * half, (side + 1) * half)
     .map((ingredient) => {
       const stock = state.shelfStock[ingredient.id];
       const empty = stock === 0;
@@ -25,7 +29,8 @@ export function renderShelf(state: GameState, offset: number): string {
 
 export function renderMixture(state: GameState): string {
   const full =
-    state.cauldronIngredients.length === LEVEL_ONE_SETTINGS.cauldronLimit;
-  return `<p class="ingredient-counter${full ? ' ingredient-counter-full' : ''}" id="ingredient-counter" tabindex="-1" role="status">Ingredients: ${state.cauldronIngredients.length} / ${LEVEL_ONE_SETTINGS.cauldronLimit}</p>
+    state.cauldronIngredients.length ===
+    DIFFICULTY_SETTINGS[state.difficulty].cauldronLimit;
+  return `<p class="ingredient-counter${full ? ' ingredient-counter-full' : ''}" id="ingredient-counter" tabindex="-1" role="status">Ingredients: ${state.cauldronIngredients.length} / ${DIFFICULTY_SETTINGS[state.difficulty].cauldronLimit}</p>
     <ol class="mixture-order" aria-label="Ingredients in addition order">${state.cauldronIngredients.map((ingredient) => `<li>${ingredient.name}</li>`).join('')}</ol>`;
 }

@@ -45,10 +45,12 @@
 }
 
 .ingredient-card-heading {
+  box-sizing: border-box;
+  width: tokens.$size-full;
   display: flex;
   align-items: center;
   gap: tokens.$space-6;
-  padding-right: tokens.$space-16;
+  padding-right: tokens.$size-28;
   line-height: 1.05;
 }
 
@@ -270,4 +272,17 @@
   filter: blur(12px);
   pointer-events: none;
   user-select: none;
+}
+
+.is-hard .slot-group {
+  gap: tokens.$space-8;
+}
+
+.is-hard .ingredient-card {
+  min-height: tokens.$hard-card-height;
+  padding: tokens.$space-8;
+}
+
+.is-hard .hero-art {
+  width: tokens.$hard-hero-width;
 }

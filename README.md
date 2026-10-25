@@ -4,7 +4,7 @@ A TypeScript + Vite + SCSS + native DOM game for RS School. Level 1 (US 1.1–1.
 
 ## Play
 
-Start Game or Menu > New Game starts a fresh Medium run:
+Start Game or Menu > New Game starts a fresh run at the difficulty selected in Menu (Medium by default):
 
 - Six ingredients, each with independent random stock of 2–15. Click a card or focus it and press Enter/Space to spend one stock and add a portion. Exhausted slots stay empty and disabled.
 - The cauldron holds at most four ingredients and preserves addition order. Active cards show icon, name, Temperature, Density, Magic Power and stock directly.
@@ -13,9 +13,9 @@ Start Game or Menu > New Game starts a fresh Medium run:
 - A run starts at 02:30 with three lives. It ends when time or lives reach zero, or when both shelf and cauldron are empty. An empty shelf still permits brewing the final mixture.
 - Pause freezes time and conceals the field. Resume preserves recipe, stock and mixture; Exit to Menu discards the run. Hidden tabs pause automatically and require explicit Resume. Help also pauses a run.
 - Game Over shows the reason and score. Qualifying results prompt for a 2–15 character name: letters, digits, spaces, underscore or hyphen.
-- One Level 1 Top-10 persists locally, sorted by score descending and then earlier result date. Open it from Menu or Game Over. Clear Leaderboard uses an in-app confirmation. Storage errors produce a safe empty view or retry message.
+- One Top-10 per difficulty persists locally, sorted by score descending and then earlier result date. Open it from Menu or Game Over. Clear Leaderboard uses an in-app confirmation. Storage errors produce a safe empty view or retry message.
 
-Before starting, six circular frames and the cauldron are empty, Time and Score are 0, and no lives appear. Help opens the rules. Difficulty selection and saved-run continuation are unavailable until Level 2. There are no Level 1 chemical reactions.
+Before starting, six circular frames and the cauldron are empty, Time and Score are 0, and no lives appear. Help opens the rules. Easy, Medium and Hard are selectable before play. Saved-run continuation is pending US 2.2. There are no Level 1 chemical reactions.
 
 ## Run locally
 
@@ -64,3 +64,14 @@ Task specifications: [US 1.1](https://github.com/rolling-scopes-school/qualifyin
 [Figma individual-artwork reference](https://www.figma.com/design/1Na01N57qT50ngfEQArtwo/Alchemist-s-Cauldron?node-id=7-3948)
 
 The upstream task checkout stays outside this repository in sibling rsschool-qualifying-stage. Task PRs merge into story-2. The final story-2 → story-1 PR and existing story-1 → main PR remain open for review.
+
+## Difficulty settings (US 2.1)
+
+| Setting          | Easy      | Medium    | Hard     |
+| ---------------- | --------- | --------- | -------- |
+| Shelf / capacity | 4 / 4     | 6 / 4     | 8 / 5    |
+| Time / lives     | 180 / 5   | 150 / 3   | 150 / 3  |
+| Tolerance        | 12        | 8         | 5        |
+| Reward / bonus   | 100 / 15s | 200 / 10s | 300 / 5s |
+
+The Medium rules described above remain the Level 1 rules. Each difficulty uses its own official recipe pool and leaderboard. The table adds a Difficulty column and filter. Existing Level 1 results remain in the Medium list; clearing one list preserves the others. Difficulty is remembered locally and locked during a run. Reaction counts remain in configuration for Level 3; no reactions run in Level 2.
