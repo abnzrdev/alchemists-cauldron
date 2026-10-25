@@ -1,4 +1,3 @@
-
 # Alchemist's Cauldron
 
 A browser-based potion brewing game developed for the RS School Qualifying Stage.
