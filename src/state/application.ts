@@ -1,3 +1,5 @@
+import { RunClock, formatTime, getEndReason } from '../logic/timer.ts';
+import { renderGameOver } from '../ui/game-over.ts';
 import { brew } from '../logic/brewing.ts';
 import { updateParameterBars } from '../ui/parameter-bars.ts';
 import { addIngredient, createGame } from './game-state.ts';
@@ -12,6 +14,9 @@ import {
 export function mountLevelOne(root: HTMLElement): () => void {
   let state: GameState | null = null;
   const abort = new AbortController();
+  let clock: RunClock | null = null;
+  let timer: ReturnType<typeof setInterval> | undefined;
+  root.insertAdjacentHTML('beforeend', renderGameOver());
   const get = <T extends HTMLElement>(selector: string): T => {
     const element = root.querySelector<T>(selector);
     if (!element) throw new Error(`Missing game element: ${selector}`);
@@ -41,18 +46,66 @@ export function mountLevelOne(root: HTMLElement): () => void {
     }
     panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}`;
     get('#game-score').textContent = String(state.score);
-    get('#game-time').textContent = String(state.timeLeft);
+    updateTime();
+    get('#game-lives').textContent = `Lives: ${state.lives} / 3`;
     get<HTMLButtonElement>('[data-action="brew"]').disabled =
       !state.cauldronIngredients.length || state.status !== 'playing';
     updateParameterBars(root, state);
   }
 
+  function updateTime(): void {
+    if (!state) return;
+    get('#game-time').textContent = formatTime(state.timeLeft);
+    get<HTMLProgressElement>('#time-progress').value = state.timeLeft;
+    get('#game-time')
+      .closest('.counter-details')
+      ?.classList.toggle('timer-urgent', state.timeLeft < 15);
+  }
+
+  function finishIfNeeded(): boolean {
+    if (!state) return false;
+    const reason = getEndReason(state);
+    if (!reason) return false;
+    clearInterval(timer);
+    state = { ...state, status: 'game-over' };
+    render();
+    const dialog = get<HTMLDialogElement>('#game-over-dialog');
+    if (!dialog.open) {
+      root
+        .querySelectorAll<HTMLDialogElement>('dialog[open]')
+        .forEach((open) => open.close());
+      get('#game-over-reason').textContent = reason;
+      get('#final-score').textContent = String(state.score);
+      dialog.showModal();
+    }
+    return true;
+  }
+
+  function tick(): void {
+    if (state?.status !== 'playing' || !clock) return;
+    state = { ...state, timeLeft: clock.remaining() };
+    updateTime();
+    finishIfNeeded();
+  }
+
   function start(): void {
+    clearInterval(timer);
+    root
+      .querySelectorAll<HTMLDialogElement>('dialog[open]')
+      .forEach((dialog) => dialog.close());
+    root.querySelector('.recipe-panel')?.remove();
+    root.querySelector('#time-progress')?.remove();
     state = createGame();
+    clock = new RunClock(state.timeLeft);
+    get('#game-time').parentElement?.insertAdjacentHTML(
+      'beforeend',
+      '<progress id="time-progress" class="time-progress" max="150" value="150" aria-label="Remaining time"></progress>',
+    );
+    timer = setInterval(tick, 100);
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
     render();
     root
       .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
@@ -60,6 +113,13 @@ export function mountLevelOne(root: HTMLElement): () => void {
   }
 
   function exit(): void {
+    clearInterval(timer);
+    clock = null;
+    get<HTMLDialogElement>('#game-over-dialog').close();
+    root.querySelector('#time-progress')?.remove();
+    get('#game-time')
+      .closest('.counter-details')
+      ?.classList.remove('timer-urgent');
     state = null;
     screen.classList.remove('is-running');
     menuButton.disabled = false;
@@ -82,13 +142,22 @@ export function mountLevelOne(root: HTMLElement): () => void {
           ? event.target.closest<HTMLButtonElement>('button')
           : null;
       if (!button || button.disabled) return;
+      if (button.dataset.action === 'play-again') {
+        start();
+        return;
+      }
       if (button.dataset.action === 'exit-run') {
         exit();
         return;
       }
+      if (button.dataset.ingredient || button.dataset.action === 'brew') {
+        tick();
+        if (state?.status !== 'playing') return;
+      }
       if (button.dataset.action === 'brew' && state) {
         const outcome = brew(state);
         state = outcome.state;
+        clock?.reset(state.timeLeft);
         render();
         get('#brew-feedback').textContent =
           outcome.result === 'success'
@@ -96,6 +165,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
             : state.lives
               ? 'The brew failed. One life lost. Try a new mixture.'
               : 'No lives remain. Return to the menu to start again.';
+        if (finishIfNeeded()) return;
         root
           .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
           ?.focus();
@@ -118,5 +188,14 @@ export function mountLevelOne(root: HTMLElement): () => void {
     },
     { signal: abort.signal },
   );
-  return () => abort.abort();
+  get<HTMLDialogElement>('#game-over-dialog').addEventListener(
+    'cancel',
+    (event) => event.preventDefault(),
+    { signal: abort.signal },
+  );
+  return () => {
+    clearInterval(timer);
+    abort.abort();
+    root.querySelector('#game-over-dialog')?.remove();
+  };
 }
