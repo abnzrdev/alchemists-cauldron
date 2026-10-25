@@ -2,9 +2,10 @@
 import { DIFFICULTY_SETTINGS } from '../data/difficulty.ts';
 import type { GameState } from '../state/game-state.ts';
 import { getShelfIngredients, canAddIngredient } from '../state/game-state.ts';
+import { asset } from './assets.ts';
 
 export function renderIngredientIcon(ingredient: Ingredient): string {
-  return `<svg class="ingredient-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><use href="${import.meta.env.BASE_URL}assets/ingredients.svg#${ingredient.icon}"></use></svg>`;
+  return `<img class="ingredient-glyph" src="${asset(`ingredients/${ingredient.id}`, 'webp')}" alt="" aria-hidden="true" draggable="false" width="512" height="512" />`;
 }
 const signed = (value: number) =>
   value > 0 ? `+${value}` : value < 0 ? `−${Math.abs(value)}` : '0';
