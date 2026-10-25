@@ -3,9 +3,9 @@ import {
   PARAMETERS,
   BAR_LIMITS,
   barPosition,
-  calculateCauldron,
   inRange,
 } from '../logic/cauldron.ts';
+import { calculateMixture } from '../logic/reactions.ts';
 const labels = {
   temperature: 'Temperature',
   density: 'Density',
@@ -20,7 +20,7 @@ export function updateParameterBars(root: HTMLElement, state: GameState): void {
     panel.innerHTML = `${PARAMETERS.map((key) => `<div class="parameter-row" data-parameter="${key}"><div class="parameter-label"><span>${labels[key]}</span><output></output></div><div class="parameter-track" role="meter" aria-label="${labels[key]}" aria-valuemin="${-BAR_LIMITS[key]}" aria-valuemax="${BAR_LIMITS[key]}"><span class="parameter-target"></span><span class="parameter-zero" aria-hidden="true"></span><span class="parameter-marker" aria-hidden="true"></span></div><span class="parameter-range"></span></div>`).join('')}`;
     root.querySelector('.recipe-panel')?.append(panel);
   }
-  const values = calculateCauldron(state.cauldronIngredients);
+  const values = calculateMixture(state.cauldronIngredients, state.difficulty);
   PARAMETERS.forEach((key) => {
     const row = panel.querySelector<HTMLElement>(`[data-parameter="${key}"]`)!;
     const range = state.activeRecipe[key];

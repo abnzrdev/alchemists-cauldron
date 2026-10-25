@@ -2,6 +2,8 @@
 @use 'environment';
 @use 'panels';
 @use 'game';
+@use 'feedback';
+@use 'liquid';
 
 @font-face {
   font-family: tokens.$font-face-display;
@@ -220,14 +222,18 @@ body {
   transform-origin: top left;
 }
 
-.cauldron {
-  z-index: 2;
+.cauldron,
+.cauldron-front-rim {
   position: absolute;
   top: 0;
   left: 16.86px;
   width: tokens.$cauldron-width;
   height: tokens.$cauldron-height;
   object-fit: cover;
+}
+
+.cauldron {
+  z-index: 2;
 }
 
 .ingredient-slots,
@@ -258,9 +264,8 @@ body {
   width: tokens.$slot-diameter;
   aspect-ratio: 1;
   min-width: 0;
-  border: 1px solid var(--color-bronze);
   border-radius: tokens.$radius-round;
-  background: tokens.$inventory-panel;
+  background: tokens.$empty-slot-art;
   box-shadow: tokens.$inventory-shadow;
 }
 
@@ -551,44 +556,6 @@ button:focus-visible {
   cursor: pointer;
 }
 
-.ingredient-slot::before {
-  position: absolute;
-  content: '';
-  inset: 5px;
-  border: 1px solid var(--color-frame-inset);
-  border-radius: tokens.$radius-round;
-  pointer-events: none;
-}
-
-.slot-ornament {
-  position: absolute;
-  inset: 10px;
-  border: 1px solid var(--color-frame-engraving);
-  border-radius: tokens.$radius-round;
-  pointer-events: none;
-}
-
-.slot-ornament::before,
-.slot-ornament::after {
-  position: absolute;
-  content: '';
-  left: calc(50% - 3px);
-  width: tokens.$size-6;
-  height: tokens.$size-6;
-  border: 1px solid var(--color-gold);
-  background: var(--color-panel-recess);
-  transform: rotate(45deg);
-  opacity: 0.55;
-}
-
-.slot-ornament::before {
-  top: -4px;
-}
-
-.slot-ornament::after {
-  bottom: -4px;
-}
-
 .ingredient-content {
   padding: tokens.$space-16;
 }
@@ -634,7 +601,7 @@ button:focus-visible {
 
 .cauldron-effects {
   position: absolute;
-  z-index: 4;
+  z-index: 5;
   inset: 0;
   pointer-events: none;
 }

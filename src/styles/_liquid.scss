@@ -1,0 +1,121 @@
+@use 'tokens';
+
+.cauldron-liquid {
+  position: absolute;
+  z-index: 3;
+  left: tokens.$liquid-left;
+  top: tokens.$liquid-top;
+  width: tokens.$liquid-width;
+  height: tokens.$liquid-height;
+  overflow: hidden;
+  clip-path: ellipse(50% 50% at 50% 50%);
+  border-radius: tokens.$radius-round;
+  background: tokens.$liquid-base;
+  pointer-events: none;
+}
+
+.cauldron-liquid[hidden] {
+  display: none;
+}
+
+.potion-liquid-image {
+  position: absolute;
+  width: tokens.$size-full;
+  height: tokens.$liquid-texture-height;
+  left: 0;
+  top: tokens.$liquid-texture-top;
+  animation: potion-surface 5s ease-in-out infinite alternate;
+}
+
+.cauldron-front-rim {
+  z-index: 4;
+  clip-path: tokens.$cauldron-front-mask;
+  pointer-events: none;
+}
+
+.liquid-ripple {
+  position: absolute;
+  inset: 14% 25%;
+  border: 1px solid tokens.$liquid-ripple-color;
+  border-radius: tokens.$radius-round;
+  opacity: 0;
+  animation: potion-ripple 4s ease-out infinite;
+}
+
+.liquid-ripple-delayed {
+  animation-delay: -2s;
+}
+
+.liquid-bubble {
+  position: absolute;
+  left: 28%;
+  bottom: 15%;
+  width: tokens.$size-6;
+  height: tokens.$size-6;
+  border: 1px solid tokens.$liquid-ripple-color;
+  border-radius: tokens.$radius-round;
+  opacity: 0;
+  animation: potion-bubble 3800ms ease-out infinite;
+}
+
+.liquid-bubble:nth-of-type(2) {
+  left: 58%;
+  animation-delay: -1600ms;
+}
+
+.liquid-bubble:nth-of-type(3) {
+  left: 76%;
+  animation-delay: -2800ms;
+}
+
+.is-paused .cauldron-liquid * {
+  animation-play-state: paused;
+}
+
+@keyframes potion-surface {
+  from {
+    transform: translateY(1px) scale(1);
+  }
+
+  to {
+    transform: translateY(-1px) scale(1.025);
+  }
+}
+
+@keyframes potion-ripple {
+  0% {
+    transform: scale(0.35);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes potion-bubble {
+  0% {
+    transform: translateY(4px) scale(0.4);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.65;
+  }
+
+  100% {
+    transform: translateY(-20px) scale(1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cauldron-liquid * {
+    animation: none;
+  }
+}

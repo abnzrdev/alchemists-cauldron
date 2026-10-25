@@ -56,8 +56,9 @@
 
 .ingredient-glyph {
   flex: none;
-  width: tokens.$size-28;
-  height: tokens.$size-28;
+  width: tokens.$ingredient-art-size;
+  height: tokens.$ingredient-art-size;
+  object-fit: contain;
 }
 
 .ingredient-card-stats {
@@ -99,8 +100,22 @@
   text-align: center;
 }
 
+.is-running .primary-action {
+  width: tokens.$size-full;
+}
+
 .ingredient-counter {
   margin: tokens.$space-8 auto;
+}
+
+.reaction-status {
+  margin: 0;
+  color: var(--color-gold);
+  font-size: tokens.$font-size-stat;
+}
+
+.reaction-status:empty {
+  display: none;
 }
 
 .ingredient-counter-full {
@@ -289,4 +304,27 @@
 
 .save-status:empty {
   display: none;
+}
+
+.hero-art.is-drop-target {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
+  border-radius: tokens.$radius-12;
+  box-shadow: tokens.$drop-zone-shadow;
+}
+
+.ingredient-tooltip {
+  box-sizing: border-box;
+  position: fixed;
+  z-index: tokens.$tooltip-layer;
+  width: tokens.$tooltip-width;
+  padding: tokens.$space-12;
+  border: 1px solid var(--color-gold);
+  border-radius: tokens.$radius-12;
+  background: var(--color-charcoal);
+  color: var(--color-parchment);
+  box-shadow: tokens.$game-panel-shadow;
+  font-size: tokens.$font-size-stat;
+  font-family: tokens.$font-body;
+  pointer-events: none;
 }

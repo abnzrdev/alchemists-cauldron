@@ -4,7 +4,6 @@
   --color-stone-seam: rgb(91 91 64 / 12%);
   --color-candle-halo: rgb(201 155 69 / 22%);
   --color-frame-inset: rgb(201 155 69 / 24%);
-  --color-frame-engraving: rgb(139 101 52 / 18%);
   --color-panel-recess: #111710;
   --color-seal: #f1d48b;
   --color-control-highlight: #c8a45e;
@@ -144,9 +143,6 @@ $mobile-gutters: 16px 16px 24px;
 $space-12: 12px;
 $space-14: 14px;
 $radius-round: 50%;
-$inventory-panel:
-  radial-gradient(circle at 40% 30%, rgb(38 65 45 / 22%), transparent 70%),
-  linear-gradient(145deg, #111c15, #090e0b);
 $inventory-shadow:
   inset 0 0 0 2px rgb(16 13 8 / 90%),
   inset 0 6px 18px rgb(0 0 0 / 45%),
@@ -205,3 +201,68 @@ $time-bar-height: 7px;
 $color-danger: #e58575;
 $hard-card-height: 108px;
 $hard-hero-width: min(100%, 250px);
+$drop-zone-shadow: 0 0 24px var(--color-frame-inset);
+$tooltip-width: min(220px, calc(100vw - 16px));
+$tooltip-layer: 100;
+$brew-success-glow: radial-gradient(
+  ellipse,
+  #d6d98b 0%,
+  rgb(94 166 106 / 65%) 25%,
+  transparent 65%
+);
+$brew-failure-glow: radial-gradient(
+  ellipse,
+  #e9c383 0%,
+  rgb(169 80 45 / 70%) 25%,
+  transparent 65%
+);
+$fx-window-top: -72px;
+$ingredient-art-size: 48px;
+$liquid-left: 113px;
+$liquid-top: 23px;
+$liquid-width: 374px;
+$liquid-height: 46px;
+$liquid-texture-height: 180%;
+$liquid-texture-top: -40%;
+$liquid-base: #123e27;
+$liquid-ripple-color: rgb(231 212 126 / 45%);
+$cauldron-front-mask: polygon(
+  0 12%,
+  15% 12%,
+  25% 16%,
+  50% 19%,
+  75% 16%,
+  85% 12%,
+  100% 12%,
+  100% 100%,
+  0 100%
+);
+$success-splash-width: 420px;
+$success-splash-height: 315px;
+$success-splash-top: -164px;
+$success-splash-mobile-top: -236px;
+$fx-mobile-window-height: 150px;
+$fx-mobile-sprite-top: -280px;
+$fx-mobile-circle-top: -310px;
+$fx-mobile-glow-top: 20px;
+$empty-slot-art: url('/assets/final-polish/ui-slot-frame-circular-bronze.webp')
+  center / contain no-repeat;
+$fx-window-height: 222px;
+$fx-sprite-size: 420px;
+$fx-sprite-top: -208px;
+$fx-circle-size: 480px;
+$fx-circle-top: -238px;
+$fx-glow-top: 92px;
+$fx-glow-width: 68%;
+$fx-glow-height: 80px;
+$fx-edge-mask: linear-gradient(transparent, #000 12%, #000 78%, transparent);
+$fx-steam-glow: radial-gradient(
+  ellipse,
+  rgb(143 204 235 / 45%),
+  transparent 65%
+);
+$fx-arcane-glow: radial-gradient(
+  ellipse,
+  rgb(170 101 218 / 45%),
+  transparent 65%
+);

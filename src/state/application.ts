@@ -1,3 +1,10 @@
+import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
+import { updateCauldronLiquid } from '../ui/cauldron-liquid.ts';
+import { getReactions } from '../data/reactions.ts';
+import { evaluateReactions } from '../logic/reactions.ts';
+import { bindIngredientTooltip } from '../ui/ingredient-tooltip.ts';
+import { bindBrewFeedback } from '../ui/brew-feedback.ts';
+import { bindGameShortcuts } from '../ui/keyboard-shortcuts.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import {
@@ -14,8 +21,9 @@ import { renderPause } from '../ui/pause.ts';
 import { RunClock, formatTime, getEndReason } from '../logic/timer.ts';
 import { renderGameOver } from '../ui/game-over.ts';
 import { brew } from '../logic/brewing.ts';
+import { pourOut } from '../logic/pour-out.ts';
 import { updateParameterBars } from '../ui/parameter-bars.ts';
-import { addIngredient, createGame } from './game-state.ts';
+import { addIngredient, canAddIngredient, createGame } from './game-state.ts';
 import type { GameState } from './game-state.ts';
 import { renderEmptySlots } from '../ui/startScreen.ts';
 import {
@@ -41,14 +49,60 @@ export function mountGame(root: HTMLElement): () => void {
   const startContent = [...primary.childNodes];
   const screen = get('.start-screen');
   const menuButton = get<HTMLButtonElement>('.circular-control-menu');
+  const feedback = bindBrewFeedback(root);
+  const unbindShortcuts = bindGameShortcuts(
+    root,
+    () => state?.status === 'playing',
+  );
+  const tooltip = bindIngredientTooltip(
+    root,
+    () => state?.status === 'playing' && state.difficulty === 'hard',
+  );
+
+  const drag = bindIngredientDrag(root, {
+    canAdd: (id) => state !== null && canAddIngredient(state, id),
+    add: selectIngredient,
+  });
+
+  function selectIngredient(id: string): void {
+    tick();
+    if (!state) return;
+    const previous = state;
+    const next = addIngredient(state, id);
+    if (next === state) return;
+    state = next;
+    clock?.reset(state.timeLeft);
+    persist();
+    render();
+    feedback.react(previous, id);
+    if (state.lives < previous.lives)
+      get('#brew-feedback').textContent =
+        'Volatile Mix! One life lost; the cauldron was emptied.';
+    else if (state.timeLeft < previous.timeLeft)
+      get('#brew-feedback').textContent = 'Steam Burst! Five seconds lost.';
+    if (finishIfNeeded()) return;
+    const same = root.querySelector<HTMLButtonElement>(
+      `[data-ingredient="${id}"]:not(:disabled)`,
+    );
+    (
+      same ??
+      root.querySelector<HTMLButtonElement>(
+        '[data-ingredient]:not(:disabled)',
+      ) ??
+      get('#ingredient-counter')
+    ).focus();
+  }
 
   function render(): void {
+    tooltip.reset();
+    drag.reset();
     if (!state) return;
     get('.slot-group-left').innerHTML = renderShelf(state, 0);
     get('.slot-group-right').innerHTML = renderShelf(state, 1);
     get('.cauldron-content').innerHTML = state.cauldronIngredients
       .map(renderIngredientIcon)
       .join('');
+    updateCauldronLiquid(root, state.cauldronIngredients.length > 0);
     let panel = root.querySelector<HTMLElement>('.run-panel');
     if (!panel) {
       const recipe = document.createElement('section');
@@ -59,12 +113,18 @@ export function mountGame(root: HTMLElement): () => void {
       panel.className = 'run-panel';
       recipe.append(panel);
     }
-    panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}`;
+    const active = evaluateReactions(
+      state.cauldronIngredients,
+      getReactions(state.difficulty),
+    ).active;
+    panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}<p class="reaction-status" role="status">${active.length ? `Active: ${active.map((item) => item.name).join(', ')}` : ''}</p>`;
     get('#game-score').textContent = String(state.score);
     updateTime();
     get('#game-lives').textContent =
       `Lives: ${state.lives} / ${DIFFICULTY_SETTINGS[state.difficulty].lives}`;
     get<HTMLButtonElement>('[data-action="brew"]').disabled =
+      !state.cauldronIngredients.length || state.status !== 'playing';
+    get<HTMLButtonElement>('[data-action="pour-out"]').disabled =
       !state.cauldronIngredients.length || state.status !== 'playing';
     updateParameterBars(root, state);
   }
@@ -161,6 +221,7 @@ export function mountGame(root: HTMLElement): () => void {
     difficulty: Difficulty = loadDifficulty(),
     saved?: SavedGame,
   ): void {
+    feedback.reset();
     concealField(false);
     clearInterval(timer);
     root
@@ -182,7 +243,7 @@ export function mountGame(root: HTMLElement): () => void {
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pour-out" disabled>Pour Out</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
     render();
     persist();
     if (saved) {
@@ -196,6 +257,9 @@ export function mountGame(root: HTMLElement): () => void {
   }
 
   function exit(): void {
+    feedback.reset();
+    tooltip.reset();
+    drag.reset();
     clearSave();
     concealField(false);
     get<HTMLDialogElement>('#pause-dialog').close();
@@ -212,6 +276,7 @@ export function mountGame(root: HTMLElement): () => void {
     get('.slot-group-left').innerHTML = renderEmptySlots(1);
     get('.slot-group-right').innerHTML = renderEmptySlots(4);
     get('.cauldron-content').replaceChildren();
+    updateCauldronLiquid(root, false);
     root.querySelector('.recipe-panel')?.remove();
     get('#game-time').textContent = '0';
     get('#game-score').textContent = '0';
@@ -282,7 +347,21 @@ export function mountGame(root: HTMLElement): () => void {
         exit();
         return;
       }
-      if (button.dataset.ingredient || button.dataset.action === 'brew') {
+      if (button.dataset.action === 'pour-out') {
+        tick();
+        if (!state || state.status !== 'playing') return;
+        const next = pourOut(state);
+        if (next === state) return;
+        state = next;
+        clock?.reset(state.timeLeft);
+        persist();
+        render();
+        get('#brew-feedback').textContent =
+          'Cauldron emptied. Ten seconds lost; stock stays spent.';
+        finishIfNeeded();
+        return;
+      }
+      if (button.dataset.action === 'brew') {
         tick();
         if (state?.status !== 'playing') return;
       }
@@ -298,6 +377,7 @@ export function mountGame(root: HTMLElement): () => void {
             : state.lives
               ? 'The brew failed. One life lost. Try a new mixture.'
               : 'No lives remain. Return to the menu to start again.';
+        if (outcome.result !== 'ignored') feedback.play(outcome.result);
         if (finishIfNeeded()) return;
         root
           .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
@@ -305,20 +385,7 @@ export function mountGame(root: HTMLElement): () => void {
         return;
       }
       const id = button.dataset.ingredient;
-      if (!id || !state) return;
-      state = addIngredient(state, id);
-      persist();
-      render();
-      const same = root.querySelector<HTMLButtonElement>(
-        `[data-ingredient="${id}"]:not(:disabled)`,
-      );
-      (
-        same ??
-        root.querySelector<HTMLButtonElement>(
-          '[data-ingredient]:not(:disabled)',
-        ) ??
-        get('#ingredient-counter')
-      ).focus();
+      if (id) selectIngredient(id);
     },
     { signal: abort.signal },
   );
@@ -354,6 +421,10 @@ export function mountGame(root: HTMLElement): () => void {
     clearInterval(timer);
     abort.abort();
     results.dispose();
+    drag.dispose();
+    tooltip.dispose();
+    feedback.dispose();
+    unbindShortcuts();
     root.querySelector('#game-over-dialog')?.remove();
     root.querySelector('#pause-dialog')?.remove();
   };
