@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="516" height="114" viewBox="0 0 516 114" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Inset panel">
+<use xlink:href="#stroke0_0_282" fill="url(#paint0_linear_0_282)"/>
+<mask id="stroke1_0_282" fill="white">
+<use xlink:href="#stroke0_0_282"/>
+</mask>
+<path d="M18.1406 0H497.859C497.859 12.4364 503.906 18.6545 516 18.6545V95.3455C503.906 95.3455 497.859 101.564 497.859 114H18.1406C18.1406 101.564 12.0938 95.3455 0 95.3455V18.6545C12.0938 18.6545 18.1406 12.4364 18.1406 0Z" stroke-width="2" stroke="#C99B45" mask="url(#stroke1_0_282)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_282" x1="0" y1="0" x2="0" y2="114" gradientUnits="userSpaceOnUse">
+<stop stop-color="#285339"/>
+<stop offset="1" stop-color="#092519"/>
+</linearGradient>
+<path id="stroke0_0_282" d="M18.1406 0H497.859C497.859 12.4364 503.906 18.6545 516 18.6545V95.3455C503.906 95.3455 497.859 101.564 497.859 114H18.1406C18.1406 101.564 12.0938 95.3455 0 95.3455V18.6545C12.0938 18.6545 18.1406 12.4364 18.1406 0Z"/>
+</defs>
+</svg>

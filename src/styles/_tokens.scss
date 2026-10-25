@@ -1,0 +1,191 @@
+:root {
+  --color-panel-muted: #c4b793;
+  --color-stone-edge: rgb(30 35 27 / 60%);
+  --color-stone-seam: rgb(91 91 64 / 12%);
+  --color-candle-halo: rgb(201 155 69 / 22%);
+  --color-frame-inset: rgb(201 155 69 / 24%);
+  --color-frame-engraving: rgb(139 101 52 / 18%);
+  --color-panel-recess: #111710;
+  --color-seal: #f1d48b;
+  --color-control-highlight: #c8a45e;
+  --color-page-edge: #a07830;
+  --color-spine-dark: #5a3a10;
+  --color-spine-light: #7a5020;
+  --color-cover-dark: #6b4718;
+  --color-cover-light: #9a6c2e;
+  --color-book-ink: rgb(90 58 16 / 50%);
+  --color-wall-mid: #111a12;
+  --color-charcoal: #0a0f0b;
+  --color-deep-green: #092519;
+  --color-dark-wood: #281c11;
+  --color-bronze: #8b6534;
+  --color-gold: #c99b45;
+  --color-parchment: #fff2c9;
+  --color-shadow: rgb(0 0 0 / 50%);
+  --color-title-glow: rgb(255 242 201 / 63%);
+}
+
+// Composition dimensions, spacing, and surface treatments shared by the start screen.
+$font-display: 'IM Fell English', georgia, serif;
+$weight-regular: 400;
+$font-body: 'Cormorant Garamond', georgia, serif;
+$weight-semibold: 600;
+$size-full: 100%;
+$counter-width: 280px;
+$counter-height: 126px;
+$space-38: 38px;
+$counter-content-width: 226px;
+$counter-content-height: 110px;
+$font-size-34: 34px;
+$font-size-88: 88px;
+$title-width: 545.6px;
+$title-height: 127.1px;
+$font-size-53-32: 53.32px;
+$font-symbol: arial, sans-serif;
+$font-size-14-26: 14.26px;
+$flourish-width: 440.2px;
+$flourish-height: 57.04px;
+$space-16: 16px;
+$hero-responsive-width: min(100%, clamp(420px, 64svh, 540px));
+$hero-width: 600px;
+$hero-height: 384px;
+$cauldron-width: 566.28px;
+$cauldron-height: 365.04px;
+$slot-diameter: clamp(120px, 17svh, 144px);
+$radius-12: 12px;
+$start-responsive-width: min(340px, 100%);
+$start-width: 528px;
+$start-label-width: 468px;
+$size-28: 28px;
+$size-14: 14px;
+$space-6: 6px;
+$control-width: 120px;
+$control-height: 128px;
+$control-ring-size: 96px;
+$size-40: 40px;
+$size-32: 32px;
+$size-4: 4px;
+$radius-2: 2px;
+$metal-gradient: linear-gradient(
+  90deg,
+  var(--color-bronze),
+  var(--color-control-highlight),
+  var(--color-bronze)
+);
+$size-44: 44px;
+$size-36: 36px;
+$size-19: 19px;
+$book-page-gradient: linear-gradient(
+  90deg,
+  var(--color-bronze),
+  var(--color-control-highlight) 60%,
+  var(--color-page-edge)
+);
+$radius-2-0-0-2: 2px 0 0 2px;
+$radius-0-2-2-0: 0 2px 2px 0;
+$book-spine-gradient: linear-gradient(
+  90deg,
+  var(--color-spine-dark),
+  var(--color-spine-light)
+);
+$size-6: 6px;
+$radius-0-0-2-2: 0 0 2px 2px;
+$book-cover-gradient: linear-gradient(
+  90deg,
+  var(--color-cover-dark),
+  var(--color-cover-light),
+  var(--color-cover-dark)
+);
+$size-12: 12px;
+$size-1: 1px;
+$size-10: 10px;
+$space-28: 28px;
+$space-8-16: 8px 16px;
+$radius-6: 6px;
+$tablet-start-width: min(320px, 100%);
+$space-32: 32px;
+$space-8: 8px;
+$mobile-start-width: min(300px, 100%);
+$workshop-wall-background:
+  radial-gradient(ellipse at 50% 48%, rgb(39 83 49 / 22%), transparent 46%),
+  radial-gradient(ellipse at 25% 48%, rgb(172 105 34 / 10%), transparent 20%),
+  radial-gradient(ellipse at 75% 48%, rgb(172 105 34 / 10%), transparent 20%),
+  linear-gradient(
+    90deg,
+    rgb(0 0 0 / 55%),
+    transparent 22%,
+    transparent 78%,
+    rgb(0 0 0 / 55%)
+  ),
+  repeating-linear-gradient(
+    0deg,
+    transparent 0 118px,
+    rgb(165 149 107 / 5%) 119px,
+    rgb(0 0 0 / 30%) 120px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    transparent 0 220px,
+    rgb(0 0 0 / 13%) 221px 224px
+  ),
+  linear-gradient(
+    var(--color-charcoal),
+    var(--color-wall-mid) 45%,
+    var(--color-charcoal)
+  );
+$arch-shadow:
+  inset 0 10px 50px rgb(0 0 0 / 35%),
+  0 0 50px rgb(51 100 58 / 6%);
+$font-face-display: 'IM Fell English';
+$font-face-body: 'Cormorant Garamond';
+$board-gap: clamp(20px, 3vw, 52px);
+$screen-gutters: 20px clamp(20px, 2vw, 36px);
+$mobile-gutters: 16px 16px 24px;
+$space-12: 12px;
+$space-14: 14px;
+$radius-round: 50%;
+$inventory-panel:
+  radial-gradient(circle at 40% 30%, rgb(38 65 45 / 22%), transparent 70%),
+  linear-gradient(145deg, #111c15, #090e0b);
+$inventory-shadow:
+  inset 0 0 0 2px rgb(16 13 8 / 90%),
+  inset 0 6px 18px rgb(0 0 0 / 45%),
+  0 4px 10px rgb(0 0 0 / 30%);
+$contact-shadow-width: 380px;
+$contact-shadow: radial-gradient(ellipse, rgb(0 0 0 / 75%), transparent 70%);
+$cauldron-opening-width: 421.2px;
+$cauldron-opening-height: 44.46px;
+$tablet-hero-width: min(420px, 100%);
+$mobile-hero-width: min(320px, 100%);
+$tablet-slot-diameter: 128px;
+$mobile-slot-diameter: clamp(112px, 32vw, 136px);
+$arch-radius: 44% 44% 4px 4px;
+$arch-background:
+  radial-gradient(ellipse at 50% 80%, rgb(42 91 55 / 9%), transparent 65%),
+  linear-gradient(90deg, rgb(0 0 0 / 16%), transparent, rgb(0 0 0 / 16%));
+$column-width: 34px;
+$column-background: linear-gradient(
+  90deg,
+  #0c100d,
+  #20231b 35%,
+  #151a14 70%,
+  #090d0a
+);
+$column-shadow:
+  8px 0 20px rgb(0 0 0 / 25%),
+  -8px 0 20px rgb(0 0 0 / 25%);
+$desktop-stage-height: min(100svh, 900px);
+$ground-shadow-height: 28px;
+$ground-glow-width: 460px;
+$ground-glow-height: 68px;
+$ground-glow: radial-gradient(
+  ellipse,
+  rgb(67 109 64 / 18%),
+  rgb(149 110 42 / 6%) 40%,
+  transparent 70%
+);
+$panel-width: min(560px, calc(100% - 32px));
+$panel-small-text: 16px;
+$panel-option-text: 20px;
+$panel-summary-text: 18px;
+$panel-title-mobile: 28px;

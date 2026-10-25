@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="528" height="126" viewBox="0 0 528 126" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Carved plaque">
+<use xlink:href="#stroke0_0_118" fill="#6B471D"/>
+<mask id="stroke1_0_118" fill="white">
+<use xlink:href="#stroke0_0_118"/>
+</mask>
+<path d="M18.0684 0H509.932C509.932 12.1935 515.954 18.2903 528 18.2903V107.71C515.954 107.71 509.932 113.806 509.932 126H18.0684C18.0684 113.806 12.0456 107.71 0 107.71V18.2903C12.0456 18.2903 18.0684 12.1935 18.0684 0Z" stroke-width="3" stroke="#F1D48B" mask="url(#stroke1_0_118)"/>
+</g>
+<defs>
+<path id="stroke0_0_118" d="M18.0684 0H509.932C509.932 12.1935 515.954 18.2903 528 18.2903V107.71C515.954 107.71 509.932 113.806 509.932 126H18.0684C18.0684 113.806 12.0456 107.71 0 107.71V18.2903C12.0456 18.2903 18.0684 12.1935 18.0684 0Z"/>
+</defs>
+</svg>

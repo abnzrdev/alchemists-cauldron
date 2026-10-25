@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="50.7812" height="55.6641" viewBox="0 0 50.7812 55.6641" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Environment / Candle sconce">
+<circle id="Soft amber candle glow" cx="25.3906" cy="25.3906" r="25.3906" fill="url(#paint0_radial_0_189)"/>
+<rect id="Bronze wall plate" x="21.9727" y="25.3906" width="6.83594" height="29.7852" rx="2.92969" fill="#593D1F"/>
+<rect id="Candle shelf" x="16.1133" y="41.9922" width="18.5547" height="2.44141" fill="#593D1F"/>
+<rect id="Warm wax" x="21.9727" y="25.8789" width="6.83594" height="15.625" fill="#B88A4A"/>
+<ellipse id="Small candle flame" cx="25.3906" cy="21.2402" rx="1.95312" ry="4.63867" fill="#FFBD59"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_189" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(25.3906 25.3906) scale(25.3906)">
+<stop stop-color="#E6751F" stop-opacity="0.16"/>
+<stop offset="1" stop-color="#E6751F" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

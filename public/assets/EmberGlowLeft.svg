@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="23.4375" height="38.0625" viewBox="0 0 23.4375 38.0625" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse id="Ember glow left" cx="11.7188" cy="19.0312" rx="11.7188" ry="19.0312" fill="url(#paint0_radial_0_204)"/>
+<defs>
+<radialGradient id="paint0_radial_0_204" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(11.7188 19.0312) scale(11.7188 19.0312)">
+<stop stop-color="#C8821A" stop-opacity="0.376471"/>
+<stop offset="1" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
