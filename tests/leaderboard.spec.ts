@@ -9,7 +9,7 @@ async function endRun(page: import('@playwright/test').Page) {
 }
 test.beforeEach(async ({ page }) => {
   await page.clock.install();
-  await page.goto('/');
+  await page.goto('./');
 });
 test('qualifying score validates names, saves once, opens leaderboard and returns to Game Over', async ({
   page,

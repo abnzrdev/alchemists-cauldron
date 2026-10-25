@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     Math.random = () => 0;
   });
-  await page.goto('/');
+  await page.goto('./');
   await page.getByRole('button', { name: 'Start Game', exact: true }).click();
 });
 test('150-second timestamp countdown, urgent state, timeout and fresh play again', async ({
