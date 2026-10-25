@@ -3,6 +3,7 @@ import { getReactions } from '../data/reactions.ts';
 import { evaluateReactions } from '../logic/reactions.ts';
 import { bindIngredientTooltip } from '../ui/ingredient-tooltip.ts';
 import { bindBrewFeedback } from '../ui/brew-feedback.ts';
+import { bindGameShortcuts } from '../ui/keyboard-shortcuts.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import {
@@ -48,6 +49,10 @@ export function mountGame(root: HTMLElement): () => void {
   const screen = get('.start-screen');
   const menuButton = get<HTMLButtonElement>('.circular-control-menu');
   const feedback = bindBrewFeedback(root);
+  const unbindShortcuts = bindGameShortcuts(
+    root,
+    () => state?.status === 'playing',
+  );
   const tooltip = bindIngredientTooltip(
     root,
     () => state?.status === 'playing' && state.difficulty === 'hard',
@@ -415,6 +420,7 @@ export function mountGame(root: HTMLElement): () => void {
     drag.dispose();
     tooltip.dispose();
     feedback.dispose();
+    unbindShortcuts();
     root.querySelector('#game-over-dialog')?.remove();
     root.querySelector('#pause-dialog')?.remove();
   };
