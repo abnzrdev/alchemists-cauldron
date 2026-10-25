@@ -99,6 +99,10 @@
   text-align: center;
 }
 
+.is-running .primary-action {
+  width: tokens.$size-full;
+}
+
 .ingredient-counter {
   margin: tokens.$space-8 auto;
 }
