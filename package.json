@@ -9,10 +9,14 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:unit": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "test": "pnpm test:unit && pnpm test:browser"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "eslint": "^10.13.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.10",

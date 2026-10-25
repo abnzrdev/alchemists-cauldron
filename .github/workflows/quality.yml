@@ -25,4 +25,5 @@ jobs:
       - run: pnpm lint
       - run: pnpm exec prettier --check .
       - run: pnpm exec stylelint "src/**/*.{css,scss}"
-      - run: pnpm --if-present test
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test

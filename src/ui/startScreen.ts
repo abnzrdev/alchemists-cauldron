@@ -35,7 +35,7 @@ function circularControl(label: 'Help' | 'Menu'): string {
   </button>`;
 }
 
-function slots(start: number): string {
+export function renderEmptySlots(start: number): string {
   return Array.from({ length: 3 }, (_, index) => {
     const slot = start + index;
     return `<article class="ingredient-slot" data-slot-index="${slot}" aria-label="Empty ingredient slot ${slot}">
@@ -89,7 +89,7 @@ export function renderStartScreen(): string {
       </button>
     </div></div>
     <section class="ingredient-slots" aria-label="Ingredient inventory">
-      <div class="slot-group slot-group-left">${slots(1)}</div><div class="slot-group slot-group-right">${slots(4)}</div>
+      <div class="slot-group slot-group-left">${renderEmptySlots(1)}</div><div class="slot-group slot-group-right">${renderEmptySlots(4)}</div>
     </section>
     <nav class="secondary-controls" aria-label="Game controls">${circularControl('Help')}${circularControl('Menu')}</nav>
     ${renderPanels()}

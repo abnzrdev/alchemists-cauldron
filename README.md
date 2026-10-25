@@ -82,43 +82,15 @@ Help and Menu open accessible native dialogs. Escape dismisses a dialog and focu
 returns to its trigger, including after navigation between panels. Help explains
 ingredient stock, recipe ranges, brewing, lives, and the end-of-run conditions.
 
-Menu provides Easy, Medium, and Hard selection (Medium by default), New Game,
-Continue Game when a valid unfinished save exists, and a leaderboard. Difficulty
-is remembered locally; every setting comes from the official difficulty table in
-`src/data/difficulty.ts`. Choosing difficulty does not populate the shelf or
-change the initial zero-valued counters.
+Level 1 uses Medium settings exclusively. Easy/Hard and saved-run continuation are reserved for Level 2 and unavailable in the menu. The start screen stays empty until Start Game or Menu?s New Game emits the existing game:start event.
 
-The leaderboard reads actual local results per difficulty, sorts by descending
-score and then earlier date, and shows the Top-10 with name, score, difficulty,
-and date (`DD.MM.YYYY HH:MM`). Invalid entries are ignored. Clearing scores needs
-an in-panel confirmation and affects only the selected difficulty. There are no
-fabricated sample scores. Unavailable or malformed storage never crashes the UI.
+### Ingredient shelf and cauldron (US 1.1)
 
-### Run integration
+The first six entries of the full eight-ingredient catalogue become readable native button cards during a run. Each shows its icon, name, signed Temperature, Density, Magic Power, and independently generated stock (2?15). Adding spends one unit and preserves exact addition order, including repeated ingredients. Exhausted slots remain empty and disabled. Four ingredients block further selections; clearing a mixture preserves spent stock. Brewing, parameter bars, the timer, pause, and score submission are subsequent Level 1 tasks.
 
-The playable run is the next implementation step. Menu actions use these bubbling
-events on `#app`; they do not simulate brewing or create fake saves:
+Pure state transitions live in src/state/game-state.ts, stock generation in src/logic/stock.ts, and DOM presentation in src/ui/shelf.ts. Local SVG symbols supply independent ingredient icons. The approved empty circular frames are restored when returning to the start screen.
 
-- `game:start`: the existing event, now with `detail` containing
-  `{ mode: 'new', difficulty, settings }`. Both Start Game and Menu's New Game
-  use the same path. The run module should create its initial state and call
-  `saveGame` to replace any previous save only once initialization succeeds.
-- `game:continue`: `detail` contains `{ difficulty, settings, state }`.
-  The validated state is returned with `status: 'paused'`; its saved stock and
-  remaining time are preserved. It uses the saved difficulty, independently of
-  the choice for a new game.
-
-`src/storage/save.ts` exports `saveGame`, `loadGame`, `clearSave`, and the
-`SavedGame` type. The schema includes difficulty, status, score, timeLeft, lives,
-activeRecipe, cauldronIngredients, and shelfStock. Continue rejects finished,
-exhausted, or malformed states. The new run module will own autosave and lifecycle
-updates. Initial Time and Score remain zero, and no life icons are rendered on
-the Start Screen.
-
-Storage keys are `alchemists-cauldron:difficulty`, `alchemists-cauldron:save`, and
-`alchemists-cauldron:leaderboard:easy|medium|hard`. Leaderboard entries use
-`{ name, score, date }`, where `date` is a numeric timestamp. The run's end-of-game
-module will submit results; the menu currently reads and clears them safely.
+Automated verification: pnpm test:unit and pnpm test:browser (Playwright). Install the browser once with pnpm exec playwright install chromium. On Windows, PLAYWRIGHT_CHROMIUM_EXECUTABLE can point to an installed Chromium browser. Responsive browser tests cover 375?1920px and save review screenshots in ignored test-results/.
 
 Run all quality checks:
 

@@ -3,7 +3,7 @@
 export function renderPanels(): string {
   const difficulties = DIFFICULTIES.map(
     (difficulty) =>
-      `<button class="difficulty-button" type="button" data-difficulty="${difficulty}" aria-pressed="${difficulty === 'medium'}">${DIFFICULTY_SETTINGS[difficulty].label}</button>`,
+      `<button class="difficulty-button" type="button" data-difficulty="${difficulty}" aria-pressed="${difficulty === 'medium'}" ${difficulty !== 'medium' ? 'disabled title="Available in Level 2"' : ''}>${DIFFICULTY_SETTINGS[difficulty].label}</button>`,
   ).join('');
   const options = DIFFICULTIES.map(
     (difficulty) =>
@@ -13,7 +13,7 @@ export function renderPanels(): string {
     <dialog class="game-dialog menu-dialog" id="menu-dialog" aria-labelledby="menu-title">
       <h2 id="menu-title">The alchemist’s menu</h2>
       <p class="panel-intro">Prepare your next experiment.</p>
-      <fieldset class="difficulty-picker"><legend>Choose difficulty</legend><div class="difficulty-options">${difficulties}</div></fieldset>
+      <fieldset class="difficulty-picker"><legend>Level 1 difficulty</legend><div class="difficulty-options">${difficulties}</div></fieldset>
       <p class="difficulty-summary" id="difficulty-summary" aria-live="polite"></p>
       <p class="difficulty-details" id="difficulty-details"></p>
       <div class="menu-actions">
@@ -27,7 +27,7 @@ export function renderPanels(): string {
     </dialog>
     <dialog class="game-dialog leaderboard-dialog" id="leaderboard-dialog" aria-labelledby="leaderboard-title">
       <h2 id="leaderboard-title">The alchemists’ leaderboard</h2>
-      <label class="leaderboard-filter" for="leaderboard-difficulty">Difficulty<select id="leaderboard-difficulty">${options}</select></label>
+      <label class="leaderboard-filter" for="leaderboard-difficulty">Difficulty<select id="leaderboard-difficulty" disabled title="Level 1 uses Medium">${options}</select></label>
       <p id="leaderboard-empty" class="panel-intro">No scores yet. Complete a game to earn your place here.</p>
       <div class="leaderboard-scroll" tabindex="0" role="region" aria-label="Top ten scores" hidden>
         <table class="leaderboard-table"><caption id="leaderboard-caption"></caption><thead><tr><th scope="col">Rank</th><th scope="col">Name</th><th scope="col">Score</th><th scope="col">Difficulty</th><th scope="col">Date</th></tr></thead><tbody id="leaderboard-rows"></tbody></table>

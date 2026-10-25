@@ -1,0 +1,10 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="dragon-tears" viewBox="0 0 32 32"><path d="M16 3C12 10 6 15 6 21a10 10 0 0 0 20 0C26 15 20 10 16 3Z" fill="#5799a5" stroke="#e0c27a"/><path d="M11 19c-2 4 0 6 3 7" fill="none" stroke="#c9eef0"/></symbol>
+  <symbol id="fairy-dust" viewBox="0 0 32 32"><path d="m16 2 3 10 11 4-11 3-3 11-3-11-11-3 11-4Z" fill="#e0c27a"/><circle cx="5" cy="6" r="2" fill="#b499cc"/><circle cx="27" cy="26" r="2" fill="#b499cc"/></symbol>
+  <symbol id="frost-lotus" viewBox="0 0 32 32"><path d="M16 3q-9 10 0 24Q25 13 16 3Zm0 24Q2 23 3 10q14 2 13 17Zm0 0q14-4 13-17-14 2-13 17Z" fill="#81bfc7" stroke="#c4e9e0"/></symbol>
+  <symbol id="mandrake-root" viewBox="0 0 32 32"><path d="M16 14q-10 4-6 13m6-13q8 3 7 13m-7-13-1 15M16 15Q3 12 6 3q10 0 10 12Zm0 0Q28 11 26 3 16 4 16 15Z" fill="#608348" stroke="#bfa16a" stroke-width="2"/></symbol>
+  <symbol id="caustic-acid" viewBox="0 0 32 32"><path d="M12 3h8m-7 0v10L5 26q-2 3 2 3h18q4 0 2-3l-8-13V3" fill="none" stroke="#e0c27a" stroke-width="2"/><path d="m10 20-5 7h22l-5-7Z" fill="#9cba53"/><circle cx="15" cy="22" r="1" fill="#fff2c9"/></symbol>
+  <symbol id="essence-of-the-void" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#332744" stroke="#b99cc6"/><path d="M22 10c-13-7-19 14-5 13 9-1 7-14-1-10-5 2-1 9 2 5" fill="none" stroke="#d8b578" stroke-width="2"/></symbol>
+  <symbol id="phoenix-feather" viewBox="0 0 32 32"><path d="M6 28 25 5M9 23C-3 12 15 1 28 3q1 18-19 20Z" fill="#bf6939" stroke="#e0c27a"/><path d="m6 28 18-20" stroke="#fff2c9"/></symbol>
+  <symbol id="toad-slime" viewBox="0 0 32 32"><path d="M4 24Q4 12 13 15q3-15 10-5 3 4 0 9 13 9-2 10H9q-8 0-5-5Z" fill="#6b9651" stroke="#d1c17e"/><circle cx="15" cy="21" r="2" fill="#a9bf6a"/></symbol>
+</svg>
