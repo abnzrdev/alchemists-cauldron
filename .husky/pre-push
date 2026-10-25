@@ -1,0 +1,5 @@
+#!/bin/sh
+
+pnpm lint || exit 1
+pnpm exec prettier --check . || exit 1
+pnpm exec stylelint "src/**/*.{css,scss}" || exit 1
