@@ -1,5 +1,9 @@
 # Alchemist's Cauldron
 
+Visual polish review branch: `story-4-final-polish`. This follow-up is not published until owner approval. It uses six separate transparent WebPs from the owner-provided `alchemists-cauldron-final-assets.zip`: the circular slot frame, emerald brew success, summoning circle, purple arcane vortex, blue steam and red eruption. The original PNGs were resized to at most 640px for effects and 320px for slots, preserving alpha, and encoded as WebP at quality 0.88. Combined size decreased from 11.48 MB to 0.90 MB. The original cauldron is reused; the unused replacement cauldron, portrait card frame and circular button plaque are not duplicated in the project.
+
+Success combines inner light, rising bubbles, a summoning circle and golden motes; failure combines the eruption texture with the existing controlled shake. Pressure Spike/Steam Burst use blue steam, Black Ice uses the purple vortex, and Magma Flux/Volatile Mix use red eruption. Visuals observe existing activation transitions without changing game rules, finish through CSS animation events and support reduced motion. Native gameplay cards, readable statistics, stock badges and Help/Menu icons remain intact. Menu hides both Continue and its summary when no valid unfinished save exists; valid continuation still opens paused.
+
 A TypeScript + Vite + SCSS + native DOM game for RS School. Levels 1, 2 and all six Level 3 stories are implemented. The approved modular dark fantasy interface is preserved.
 
 ## Play
