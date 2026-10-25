@@ -208,3 +208,17 @@ $hard-hero-width: min(100%, 250px);
 $drop-zone-shadow: 0 0 24px var(--color-frame-inset);
 $tooltip-width: min(220px, calc(100vw - 16px));
 $tooltip-layer: 100;
+$brew-success-glow: radial-gradient(
+  ellipse,
+  #d6d98b 0%,
+  rgb(94 166 106 / 65%) 25%,
+  transparent 65%
+);
+$brew-failure-glow: radial-gradient(
+  ellipse,
+  #e9c383 0%,
+  rgb(169 80 45 / 70%) 25%,
+  transparent 65%
+);
+$brew-effect-width: 70%;
+$brew-effect-height: 55%;
