@@ -225,9 +225,11 @@
 .is-running .counter-content {
   gap: tokens.$space-16;
 }
+
 .is-running .counter-details {
   flex: 1;
 }
+
 .is-running .counter-details output {
   font-size: tokens.$font-size-run-counter;
   line-height: 1;
