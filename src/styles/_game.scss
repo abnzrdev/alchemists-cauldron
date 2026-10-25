@@ -5,7 +5,7 @@
 }
 
 .is-running .hero-art {
-  width: tokens.$active-hero-width;
+  width: tokens.$active-hero-compact-width;
   margin: auto;
 }
 
@@ -138,5 +138,75 @@
 @media (width < 1024px) {
   .is-running .slot-group {
     display: contents;
+  }
+}
+
+.parameter-bars {
+  width: tokens.$size-full;
+  font-family: tokens.$font-body;
+  font-size: tokens.$font-size-stat;
+}
+
+.bar-recipe {
+  margin: tokens.$space-8 0;
+  text-align: center;
+  color: var(--color-gold);
+}
+
+.parameter-row {
+  margin: tokens.$space-8 0;
+}
+
+.parameter-label {
+  display: flex;
+  justify-content: space-between;
+}
+
+.parameter-track {
+  position: relative;
+  height: tokens.$bar-height;
+  border: 1px solid var(--color-bronze);
+  border-radius: tokens.$radius-2;
+  background: var(--color-charcoal);
+}
+
+.parameter-target {
+  position: absolute;
+  left: var(--target-start);
+  width: var(--target-width);
+  height: tokens.$size-full;
+  background: var(--color-bronze);
+  opacity: 0.6;
+}
+
+.parameter-zero {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  border-left: 1px solid var(--color-panel-muted);
+}
+
+.parameter-marker {
+  position: absolute;
+  left: var(--marker-position, 50%);
+  top: -3px;
+  bottom: -3px;
+  border-left: 3px solid var(--color-parchment);
+  transform: translateX(-50%);
+  transition: left 250ms ease;
+}
+
+.parameter-in-range {
+  box-shadow: tokens.$bar-glow;
+}
+
+.parameter-range {
+  color: var(--color-panel-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parameter-marker {
+    transition: none;
   }
 }

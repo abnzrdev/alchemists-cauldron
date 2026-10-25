@@ -1,4 +1,5 @@
-﻿import { addIngredient, createGame } from './game-state.ts';
+import { updateParameterBars } from '../ui/parameter-bars.ts';
+import { addIngredient, createGame } from './game-state.ts';
 import type { GameState } from './game-state.ts';
 import { renderEmptySlots } from '../ui/startScreen.ts';
 import {
@@ -34,6 +35,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
       get('.cauldron-hero').append(panel);
     }
     panel.innerHTML = renderMixture(state);
+    updateParameterBars(root, state);
   }
 
   function start(): void {
@@ -56,6 +58,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
     get('.slot-group-right').innerHTML = renderEmptySlots(4);
     get('.cauldron-content').replaceChildren();
     root.querySelector('.run-panel')?.remove();
+    root.querySelector('.parameter-bars')?.remove();
     primary.replaceChildren(...startContent);
     get<HTMLButtonElement>('#start-game').focus();
   }
