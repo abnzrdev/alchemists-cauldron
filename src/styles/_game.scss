@@ -147,7 +147,8 @@
   font-size: tokens.$font-size-stat;
 }
 
-.bar-recipe {
+.recipe-title {
+  font-size: tokens.$font-size-game;
   margin: tokens.$space-8 0;
   text-align: center;
   color: var(--color-gold);
@@ -209,4 +210,14 @@
   .parameter-marker {
     transition: none;
   }
+}
+
+.brew-button {
+  margin-right: tokens.$space-8;
+  border-color: var(--color-gold);
+}
+
+.run-button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
