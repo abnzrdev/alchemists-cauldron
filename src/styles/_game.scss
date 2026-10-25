@@ -234,3 +234,31 @@
   font-size: tokens.$font-size-run-counter;
   line-height: 1;
 }
+
+.time-progress {
+  width: tokens.$size-full;
+  height: tokens.$time-bar-height;
+  margin-top: tokens.$space-6;
+  accent-color: var(--color-gold);
+}
+
+.timer-urgent {
+  color: tokens.$color-danger;
+  animation: timer-warning 1s ease-in-out infinite alternate;
+}
+
+.timer-urgent .time-progress {
+  accent-color: tokens.$color-danger;
+}
+
+@keyframes timer-warning {
+  to {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-urgent {
+    animation: none;
+  }
+}

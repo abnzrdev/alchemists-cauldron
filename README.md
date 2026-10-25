@@ -113,3 +113,7 @@ Three accessible meters show exact ingredient sums, including negative values. S
 ### Recipe and brewing (US 1.3)
 
 The current recipe panel shows its fantasy name, three target ranges, and live ingredient counter. Select one to four ingredients and press Brew. All three sums must fall inside the target ranges expanded by the fixed Medium tolerance of 8. Success awards 200 points, adds 10 seconds capped at 150, clears the mix and selects another random Medium recipe. Failure spends one life and clears the mix. Neither outcome restores stock. Brew is unavailable before a run and while the mixture is empty. The countdown and final Game Over panel follow in US 1.4.
+
+### Timer and Game Over (US 1.4)
+
+A run begins with 02:30 and three lives. The shrinking bar and MM:SS label use timestamp differences, including delayed callbacks; below 15 seconds the timer pulses red (reduced-motion respected). Runs end for Time is up, No lives left, or Out of ingredients. An empty shelf does not end a run while a mixture can still be brewed. The Game Over dialog shows the reason and score; Play again creates fresh stock, recipe, time and lives. Return to Menu restores the empty Start Screen.
