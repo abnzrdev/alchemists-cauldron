@@ -1,6 +1,6 @@
 # Alchemist's Cauldron
 
-A TypeScript + Vite + SCSS + native DOM game for RS School. Level 1 and Level 2 (US 2.1 and US 2.2) are implemented. Level 3 is not implemented.
+A TypeScript + Vite + SCSS + native DOM game for RS School. Levels 1 and 2 are implemented. Level 3 currently adds native drag-and-drop, Hard ingredient tooltips and chemical reactions; remaining Level 3 tasks are in progress.
 
 ## Play
 
@@ -84,4 +84,16 @@ A single unfinished game is saved after ingredient selection, Brew, pause and re
 
 Open Menu after reload and choose Continue Game when a valid save exists. It opens paused; Resume starts a fresh deadline from the saved remaining time, so time spent away does not drain the paused run. Changing the next-game difficulty does not alter a continued game. A new game replaces the old save. Exit to Menu and Game Over clear it.
 
-Storage uses alchemists-cauldron:save with a versioned envelope. Missing, malformed, outdated, finished or invalid catalogue data is rejected and removed safely. Unavailable storage never blocks play; a visible message reports when progress cannot be saved. Exact numbers and data come from the official difficulty and recipe tables. Reactions and other Level 3 mechanics remain absent.
+Storage uses alchemists-cauldron:save with a versioned envelope. Missing, malformed, outdated, finished or invalid catalogue data is rejected and removed safely. Unavailable storage never blocks play; a visible message reports when progress cannot be saved. Exact numbers and data come from the official difficulty and recipe tables.
+
+## Level 3 reaction policy (US 3.3)
+
+The owner authorized choosing fixed subsets because the official documents specify only counts. These selections are a project decision, not an official RS School clarification:
+
+- Easy: none.
+- Medium: Pressure Spike and Steam Burst.
+- Hard: Volatile Mix, Magma Flux and Black Ice.
+
+All 15 official reactions live in a typed, tested catalogue. Enabled triggers read unmodified ingredient totals; simultaneous value effects apply in catalogue order to freshly calculated values. Values are never accumulated into ingredient data. Time/life penalties and clearing occur only on inactive-to-active transitions. The previous ordered mixture determines activation, so continuing a save does not replay penalties; clearing the mixture permits later reactivation. Bars and Brew use the same adjusted values. Help describes the enabled effects.
+
+Click or drag a stocked ingredient into the cauldron. Easy/Medium retain directly visible statistics; Hard shows base statistics on hover or focus while retaining the stock badge. Before play, the six circular slots remain empty.

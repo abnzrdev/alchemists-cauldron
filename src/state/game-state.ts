@@ -5,6 +5,8 @@ import type { Ingredient } from '../data/ingredients.ts';
 import { DIFFICULTY_SETTINGS } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import { createStock } from '../logic/stock.ts';
+import { reactionTransition } from '../logic/reactions.ts';
+import { getReactions } from '../data/reactions.ts';
 
 export interface GameState {
   activeRecipe: Recipe;
@@ -52,10 +54,21 @@ export function addIngredient(state: GameState, id: string): GameState {
     (item) => item.id === id,
   );
   if (!ingredient) return state;
+  const ingredients = [...state.cauldronIngredients, ingredient];
+  const effect = reactionTransition(
+    state.cauldronIngredients,
+    ingredients,
+    getReactions(state.difficulty),
+  );
+  const timeLeft = Math.max(0, state.timeLeft - effect.timeCost);
+  const lives = Math.max(0, state.lives - effect.lifeCost);
   return {
     ...state,
     shelfStock: { ...state.shelfStock, [id]: state.shelfStock[id] - 1 },
-    cauldronIngredients: [...state.cauldronIngredients, ingredient],
+    cauldronIngredients: effect.clear ? [] : ingredients,
+    timeLeft,
+    lives,
+    status: timeLeft > 0 && lives > 0 ? state.status : 'game-over',
   };
 }
 
