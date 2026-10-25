@@ -18,6 +18,7 @@ import { renderPause } from '../ui/pause.ts';
 import { RunClock, formatTime, getEndReason } from '../logic/timer.ts';
 import { renderGameOver } from '../ui/game-over.ts';
 import { brew } from '../logic/brewing.ts';
+import { pourOut } from '../logic/pour-out.ts';
 import { updateParameterBars } from '../ui/parameter-bars.ts';
 import { addIngredient, canAddIngredient, createGame } from './game-state.ts';
 import type { GameState } from './game-state.ts';
@@ -112,6 +113,8 @@ export function mountGame(root: HTMLElement): () => void {
     get('#game-lives').textContent =
       `Lives: ${state.lives} / ${DIFFICULTY_SETTINGS[state.difficulty].lives}`;
     get<HTMLButtonElement>('[data-action="brew"]').disabled =
+      !state.cauldronIngredients.length || state.status !== 'playing';
+    get<HTMLButtonElement>('[data-action="pour-out"]').disabled =
       !state.cauldronIngredients.length || state.status !== 'playing';
     updateParameterBars(root, state);
   }
@@ -229,7 +232,7 @@ export function mountGame(root: HTMLElement): () => void {
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pour-out" disabled>Pour Out</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
     render();
     persist();
     if (saved) {
@@ -329,6 +332,20 @@ export function mountGame(root: HTMLElement): () => void {
       }
       if (button.dataset.action === 'exit-run') {
         exit();
+        return;
+      }
+      if (button.dataset.action === 'pour-out') {
+        tick();
+        if (!state || state.status !== 'playing') return;
+        const next = pourOut(state);
+        if (next === state) return;
+        state = next;
+        clock?.reset(state.timeLeft);
+        persist();
+        render();
+        get('#brew-feedback').textContent =
+          'Cauldron emptied. Ten seconds lost; stock stays spent.';
+        finishIfNeeded();
         return;
       }
       if (button.dataset.action === 'brew') {
