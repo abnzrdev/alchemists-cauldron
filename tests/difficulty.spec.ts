@@ -1,3 +1,4 @@
+import { freezeClock } from './clock';
 import { test, expect } from '@playwright/test';
 for (const [difficulty, count, capacity, time, lives, firstRecipe] of [
   ['Easy', 4, 4, '03:00', 5, 'Moon Mist'],
@@ -83,7 +84,7 @@ for (const [difficulty, count, capacity, time, lives, firstRecipe] of [
 test('Hard results use the Hard Top10, filtering and clearing leave Medium intact', async ({
   page,
 }) => {
-  await page.clock.install();
+  await freezeClock(page);
   await page.goto('./');
   await page.evaluate(() =>
     localStorage.setItem(

@@ -1,3 +1,4 @@
+import { freezeClock } from './clock';
 import { test, expect } from '@playwright/test';
 const key = 'alchemists-cauldron:leaderboard:level-1';
 async function endRun(page: import('@playwright/test').Page) {
@@ -8,7 +9,7 @@ async function endRun(page: import('@playwright/test').Page) {
   ).toBeVisible();
 }
 test.beforeEach(async ({ page }) => {
-  await page.clock.install();
+  await freezeClock(page);
   await page.goto('./');
 });
 test('qualifying score validates names, saves once, opens leaderboard and returns to Game Over', async ({

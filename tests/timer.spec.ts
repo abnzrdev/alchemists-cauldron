@@ -1,6 +1,7 @@
+import { freezeClock } from './clock';
 import { test, expect } from '@playwright/test';
 test.beforeEach(async ({ page }) => {
-  await page.clock.install();
+  await freezeClock(page);
   await page.addInitScript(() => {
     Math.random = () => 0;
   });

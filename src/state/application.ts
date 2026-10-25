@@ -1,6 +1,12 @@
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
-import { loadDifficulty } from '../storage/save.ts';
+import {
+  loadDifficulty,
+  saveGame,
+  clearSave,
+  isValidSave,
+} from '../storage/save.ts';
+import type { SavedGame } from '../storage/save.ts';
 import type { StartGameRequest } from '../ui/menu.ts';
 import { mountResultEntry } from '../ui/result-entry.ts';
 import { pauseGame, resumeGame } from './pause.ts';
@@ -22,6 +28,7 @@ export function mountGame(root: HTMLElement): () => void {
   let state: GameState | null = null;
   const abort = new AbortController();
   let clock: RunClock | null = null;
+  let lastSavedSecond = -1;
   let timer: ReturnType<typeof setInterval> | undefined;
   root.insertAdjacentHTML('beforeend', renderGameOver() + renderPause());
   const results = mountResultEntry(root);
@@ -62,6 +69,15 @@ export function mountGame(root: HTMLElement): () => void {
     updateParameterBars(root, state);
   }
 
+  function persist(): void {
+    if (!state) return;
+    lastSavedSecond = Math.ceil(state.timeLeft);
+    const saved = saveGame(state);
+    get('#save-status').textContent = saved
+      ? ''
+      : 'Progress could not be saved on this device.';
+  }
+
   function updateTime(): void {
     if (!state) return;
     get('#game-time').textContent = formatTime(state.timeLeft);
@@ -77,6 +93,7 @@ export function mountGame(root: HTMLElement): () => void {
     if (!reason) return false;
     clearInterval(timer);
     state = { ...state, status: 'game-over' };
+    persist();
     render();
     const dialog = get<HTMLDialogElement>('#game-over-dialog');
     if (!dialog.open) {
@@ -96,7 +113,8 @@ export function mountGame(root: HTMLElement): () => void {
     if (state?.status !== 'playing' || !clock) return;
     state = { ...state, timeLeft: clock.remaining() };
     updateTime();
-    finishIfNeeded();
+    if (!finishIfNeeded() && Math.ceil(state.timeLeft) !== lastSavedSecond)
+      persist();
   }
 
   function concealField(concealed: boolean): void {
@@ -115,6 +133,7 @@ export function mountGame(root: HTMLElement): () => void {
     tick();
     if (state.status !== 'playing') return;
     state = pauseGame(state, clock?.remaining() ?? state.timeLeft);
+    persist();
     clearInterval(timer);
     concealField(true);
     render();
@@ -129,6 +148,7 @@ export function mountGame(root: HTMLElement): () => void {
   function resume(): void {
     if (state?.status !== 'paused') return;
     state = resumeGame(state);
+    persist();
     clock?.reset(state.timeLeft);
     get<HTMLDialogElement>('#pause-dialog').close();
     concealField(false);
@@ -137,7 +157,10 @@ export function mountGame(root: HTMLElement): () => void {
     get<HTMLButtonElement>('[data-action="pause"]').focus();
   }
 
-  function start(difficulty: Difficulty = loadDifficulty()): void {
+  function start(
+    difficulty: Difficulty = loadDifficulty(),
+    saved?: SavedGame,
+  ): void {
     concealField(false);
     clearInterval(timer);
     root
@@ -145,25 +168,35 @@ export function mountGame(root: HTMLElement): () => void {
       .forEach((dialog) => dialog.close());
     root.querySelector('.recipe-panel')?.remove();
     root.querySelector('#time-progress')?.remove();
-    state = createGame(Math.random, difficulty);
+    state = saved
+      ? { ...saved, status: 'paused' }
+      : createGame(Math.random, difficulty);
+    if (!saved) clearSave();
     screen.classList.toggle('is-hard', difficulty === 'hard');
     clock = new RunClock(state.timeLeft);
     get('#game-time').parentElement?.insertAdjacentHTML(
       'beforeend',
       `<progress id="time-progress" class="time-progress" max="${DIFFICULTY_SETTINGS[difficulty].startTime}" value="${state.timeLeft}" aria-label="Remaining time"></progress>`,
     );
-    timer = setInterval(tick, 100);
+    if (!saved) timer = setInterval(tick, 100);
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
     render();
+    persist();
+    if (saved) {
+      concealField(true);
+      get<HTMLDialogElement>('#pause-dialog').showModal();
+      return;
+    }
     root
       .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
       ?.focus();
   }
 
   function exit(): void {
+    clearSave();
     concealField(false);
     get<HTMLDialogElement>('#pause-dialog').close();
     clearInterval(timer);
@@ -193,6 +226,30 @@ export function mountGame(root: HTMLElement): () => void {
       if (state?.status === 'playing' || state?.status === 'paused') return;
       const detail = (event as CustomEvent<StartGameRequest>).detail;
       if (isDifficulty(detail?.difficulty)) start(detail.difficulty);
+    },
+    { signal: abort.signal },
+  );
+  root.addEventListener(
+    'game:continue',
+    (event) => {
+      if (state?.status === 'playing' || state?.status === 'paused') return;
+      const saved: unknown = (event as CustomEvent<unknown>).detail;
+      if (isValidSave(saved)) start(saved.difficulty, saved);
+    },
+    { signal: abort.signal },
+  );
+  window.addEventListener(
+    'pagehide',
+    () => {
+      if (state?.status === 'playing') pause(false);
+    },
+    { signal: abort.signal },
+  );
+  window.addEventListener(
+    'pageshow',
+    () => {
+      if (state?.status === 'paused' && !root.querySelector('dialog[open]'))
+        get<HTMLDialogElement>('#pause-dialog').showModal();
     },
     { signal: abort.signal },
   );
@@ -232,6 +289,7 @@ export function mountGame(root: HTMLElement): () => void {
       if (button.dataset.action === 'brew' && state) {
         const outcome = brew(state);
         state = outcome.state;
+        persist();
         clock?.reset(state.timeLeft);
         render();
         get('#brew-feedback').textContent =
@@ -249,6 +307,7 @@ export function mountGame(root: HTMLElement): () => void {
       const id = button.dataset.ingredient;
       if (!id || !state) return;
       state = addIngredient(state, id);
+      persist();
       render();
       const same = root.querySelector<HTMLButtonElement>(
         `[data-ingredient="${id}"]:not(:disabled)`,
