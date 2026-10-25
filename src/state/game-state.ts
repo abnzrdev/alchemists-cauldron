@@ -36,14 +36,18 @@ export function createGame(
   };
 }
 
+export function canAddIngredient(state: GameState, id: string): boolean {
+  return (
+    state.status === 'playing' &&
+    state.cauldronIngredients.length <
+      DIFFICULTY_SETTINGS[state.difficulty].cauldronLimit &&
+    state.shelfStock[id] > 0 &&
+    getShelfIngredients(state.difficulty).some((item) => item.id === id)
+  );
+}
+
 export function addIngredient(state: GameState, id: string): GameState {
-  if (
-    state.status !== 'playing' ||
-    state.cauldronIngredients.length >=
-      DIFFICULTY_SETTINGS[state.difficulty].cauldronLimit ||
-    !(state.shelfStock[id] > 0)
-  )
-    return state;
+  if (!canAddIngredient(state, id)) return state;
   const ingredient = getShelfIngredients(state.difficulty).find(
     (item) => item.id === id,
   );
