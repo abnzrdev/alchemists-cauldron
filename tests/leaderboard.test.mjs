@@ -106,3 +106,17 @@ test('date uses required local DD.MM.YYYY HH:MM format', () => {
     '25.10.2026 09:05',
   );
 });
+
+test('difficulty lists remain independent and preserve existing Medium results', () => {
+  storage();
+  saveResult({ name: 'MediumMage', score: 200, date: 1 });
+  saveResult({ name: 'EasyMage', score: 100, date: 2 }, 'easy');
+  saveResult({ name: 'HardMage', score: 300, date: 3 }, 'hard');
+  assert.equal(loadLeaderboard()[0].name, 'MediumMage');
+  assert.equal(loadLeaderboard('easy')[0].name, 'EasyMage');
+  assert.equal(loadLeaderboard('hard')[0].name, 'HardMage');
+  clearLeaderboard('easy');
+  assert.deepEqual(loadLeaderboard('easy'), []);
+  assert.equal(loadLeaderboard('hard').length, 1);
+  assert.equal(loadLeaderboard().length, 1);
+});

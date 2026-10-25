@@ -1,3 +1,4 @@
+import { freezeClock } from './clock';
 import { test, expect } from '@playwright/test';
 const key = 'alchemists-cauldron:leaderboard:level-1';
 async function endRun(page: import('@playwright/test').Page) {
@@ -8,7 +9,7 @@ async function endRun(page: import('@playwright/test').Page) {
   ).toBeVisible();
 }
 test.beforeEach(async ({ page }) => {
-  await page.clock.install();
+  await freezeClock(page);
   await page.goto('./');
 });
 test('qualifying score validates names, saves once, opens leaderboard and returns to Game Over', async ({
@@ -30,6 +31,7 @@ test('qualifying score validates names, saves once, opens leaderboard and return
     'Rank',
     'Name',
     'Score',
+    'Difficulty',
     'Date',
   ]);
   await expect(page.locator('#leaderboard-rows td').last()).toHaveText(
@@ -94,10 +96,10 @@ test('full leaderboard excludes low/equal-later results and sorts earlier ties',
   await expect(page.locator('.ingredient-slot')).toHaveCount(6);
   await expect(
     page.getByRole('button', { name: 'Easy', exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await expect(
     page.getByRole('button', { name: 'Hard', exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
 });
 test('broken data and unavailable reads/writes are handled without losing Game Over', async ({
   page,

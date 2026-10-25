@@ -1,3 +1,4 @@
+import type { Difficulty } from '../data/difficulty.ts';
 import {
   isRecord,
   readStoredJson,
@@ -33,8 +34,14 @@ export function sortResults(
     .sort((a, b) => b.score - a.score || a.date - b.date)
     .slice(0, 10);
 }
-export function loadLeaderboard(): LeaderboardEntry[] {
-  const data = readStoredJson(LEADERBOARD_KEY);
+export const leaderboardKey = (difficulty: Difficulty): string =>
+  difficulty === 'medium'
+    ? LEADERBOARD_KEY
+    : `alchemists-cauldron:leaderboard:${difficulty}`;
+export function loadLeaderboard(
+  difficulty: Difficulty = 'medium',
+): LeaderboardEntry[] {
+  const data = readStoredJson(leaderboardKey(difficulty));
   return Array.isArray(data)
     ? sortResults(data.filter(isLeaderboardEntry))
     : [];
@@ -51,15 +58,21 @@ export function qualifies(
     !last || score > last.score || (score === last.score && date < last.date)
   );
 }
-export function saveResult(entry: LeaderboardEntry): boolean {
+export function saveResult(
+  entry: LeaderboardEntry,
+  difficulty: Difficulty = 'medium',
+): boolean {
   if (!isLeaderboardEntry(entry)) return false;
   return writeStoredJson(
-    LEADERBOARD_KEY,
-    sortResults([...loadLeaderboard(), { ...entry, name: entry.name.trim() }]),
+    leaderboardKey(difficulty),
+    sortResults([
+      ...loadLeaderboard(difficulty),
+      { ...entry, name: entry.name.trim() },
+    ]),
   );
 }
-export function clearLeaderboard(): boolean {
-  return removeStoredValue(LEADERBOARD_KEY);
+export function clearLeaderboard(difficulty: Difficulty = 'medium'): boolean {
+  return removeStoredValue(leaderboardKey(difficulty));
 }
 export function formatResultDate(timestamp: number): string {
   const date = new Date(timestamp);

@@ -1,13 +1,17 @@
 import type { GameState } from '../state/game-state.ts';
 import { clearCauldron } from '../state/game-state.ts';
-import { LEVEL_ONE_SETTINGS } from '../data/levelOne.ts';
+import { DIFFICULTY_SETTINGS } from '../data/difficulty.ts';
 import { pickRecipe } from '../data/recipes.ts';
 import type { Recipe } from '../data/recipes.ts';
 import { calculateCauldron, inRange, PARAMETERS } from './cauldron.ts';
 import type { CauldronValues } from './cauldron.ts';
 export function matchesRecipe(values: CauldronValues, recipe: Recipe): boolean {
   return PARAMETERS.every((key) =>
-    inRange(values[key], recipe[key], LEVEL_ONE_SETTINGS.tolerance),
+    inRange(
+      values[key],
+      recipe[key],
+      DIFFICULTY_SETTINGS[recipe.difficulty].tolerance,
+    ),
   );
 }
 export function brew(
@@ -30,12 +34,12 @@ export function brew(
     return {
       state: {
         ...cleared,
-        score: state.score + LEVEL_ONE_SETTINGS.scorePerBrew,
+        score: state.score + DIFFICULTY_SETTINGS[state.difficulty].scorePerBrew,
         timeLeft: Math.min(
-          LEVEL_ONE_SETTINGS.startTime,
-          state.timeLeft + LEVEL_ONE_SETTINGS.timeBonus,
+          DIFFICULTY_SETTINGS[state.difficulty].startTime,
+          state.timeLeft + DIFFICULTY_SETTINGS[state.difficulty].timeBonus,
         ),
-        activeRecipe: pickRecipe('medium', random),
+        activeRecipe: pickRecipe(state.difficulty, random),
       },
       result: 'success',
     };
