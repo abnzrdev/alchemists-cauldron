@@ -109,3 +109,7 @@ absence of a horizontal page scrollbar.
 ### Cauldron bars (US 1.2)
 
 Three accessible meters show exact ingredient sums, including negative values. Symmetric scales center zero, mark the current value, and display the current Medium recipe target zone. Markers transition smoothly without replacing their DOM nodes, with reduced-motion support. Green glow indicates the unexpanded recipe range. The complete official 20-recipe table is stored locally; Level 1 selects only its seven Medium rows. Brew integration follows in US 1.3.
+
+### Recipe and brewing (US 1.3)
+
+The current recipe panel shows its fantasy name, three target ranges, and live ingredient counter. Select one to four ingredients and press Brew. All three sums must fall inside the target ranges expanded by the fixed Medium tolerance of 8. Success awards 200 points, adds 10 seconds capped at 150, clears the mix and selects another random Medium recipe. Failure spends one life and clears the mix. Neither outcome restores stock. Brew is unavailable before a run and while the mixture is empty. The countdown and final Game Over panel follow in US 1.4.

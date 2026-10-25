@@ -1,3 +1,4 @@
+import { brew } from '../logic/brewing.ts';
 import { updateParameterBars } from '../ui/parameter-bars.ts';
 import { addIngredient, createGame } from './game-state.ts';
 import type { GameState } from './game-state.ts';
@@ -30,11 +31,19 @@ export function mountLevelOne(root: HTMLElement): () => void {
       .join('');
     let panel = root.querySelector<HTMLElement>('.run-panel');
     if (!panel) {
+      const recipe = document.createElement('section');
+      recipe.className = 'recipe-panel';
+      recipe.setAttribute('aria-label', 'Current recipe');
+      get('.cauldron-hero').append(recipe);
       panel = document.createElement('div');
       panel.className = 'run-panel';
-      get('.cauldron-hero').append(panel);
+      recipe.append(panel);
     }
-    panel.innerHTML = renderMixture(state);
+    panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}`;
+    get('#game-score').textContent = String(state.score);
+    get('#game-time').textContent = String(state.timeLeft);
+    get<HTMLButtonElement>('[data-action="brew"]').disabled =
+      !state.cauldronIngredients.length || state.status !== 'playing';
     updateParameterBars(root, state);
   }
 
@@ -43,7 +52,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p>Select ingredients from the shelf.</p><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
     render();
     root
       .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
@@ -57,8 +66,9 @@ export function mountLevelOne(root: HTMLElement): () => void {
     get('.slot-group-left').innerHTML = renderEmptySlots(1);
     get('.slot-group-right').innerHTML = renderEmptySlots(4);
     get('.cauldron-content').replaceChildren();
-    root.querySelector('.run-panel')?.remove();
-    root.querySelector('.parameter-bars')?.remove();
+    root.querySelector('.recipe-panel')?.remove();
+    get('#game-time').textContent = '0';
+    get('#game-score').textContent = '0';
     primary.replaceChildren(...startContent);
     get<HTMLButtonElement>('#start-game').focus();
   }
@@ -74,6 +84,21 @@ export function mountLevelOne(root: HTMLElement): () => void {
       if (!button || button.disabled) return;
       if (button.dataset.action === 'exit-run') {
         exit();
+        return;
+      }
+      if (button.dataset.action === 'brew' && state) {
+        const outcome = brew(state);
+        state = outcome.state;
+        render();
+        get('#brew-feedback').textContent =
+          outcome.result === 'success'
+            ? 'Potion brewed! +200 points and +10 seconds (maximum 150).'
+            : state.lives
+              ? 'The brew failed. One life lost. Try a new mixture.'
+              : 'No lives remain. Return to the menu to start again.';
+        root
+          .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
+          ?.focus();
         return;
       }
       const id = button.dataset.ingredient;

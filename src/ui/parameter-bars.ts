@@ -17,10 +17,9 @@ export function updateParameterBars(root: HTMLElement, state: GameState): void {
     panel = document.createElement('section');
     panel.className = 'parameter-bars';
     panel.setAttribute('aria-label', 'Cauldron parameters');
-    panel.innerHTML = `<p class="bar-recipe"></p>${PARAMETERS.map((key) => `<div class="parameter-row" data-parameter="${key}"><div class="parameter-label"><span>${labels[key]}</span><output></output></div><div class="parameter-track" role="meter" aria-label="${labels[key]}" aria-valuemin="${-BAR_LIMITS[key]}" aria-valuemax="${BAR_LIMITS[key]}"><span class="parameter-target"></span><span class="parameter-zero" aria-hidden="true"></span><span class="parameter-marker" aria-hidden="true"></span></div><span class="parameter-range"></span></div>`).join('')}`;
-    root.querySelector('.cauldron-hero')?.append(panel);
+    panel.innerHTML = `${PARAMETERS.map((key) => `<div class="parameter-row" data-parameter="${key}"><div class="parameter-label"><span>${labels[key]}</span><output></output></div><div class="parameter-track" role="meter" aria-label="${labels[key]}" aria-valuemin="${-BAR_LIMITS[key]}" aria-valuemax="${BAR_LIMITS[key]}"><span class="parameter-target"></span><span class="parameter-zero" aria-hidden="true"></span><span class="parameter-marker" aria-hidden="true"></span></div><span class="parameter-range"></span></div>`).join('')}`;
+    root.querySelector('.recipe-panel')?.append(panel);
   }
-  panel.querySelector('.bar-recipe')!.textContent = state.activeRecipe.name;
   const values = calculateCauldron(state.cauldronIngredients);
   PARAMETERS.forEach((key) => {
     const row = panel.querySelector<HTMLElement>(`[data-parameter="${key}"]`)!;
