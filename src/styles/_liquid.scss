@@ -18,6 +18,44 @@
   display: none;
 }
 
+.cauldron-vapor {
+  position: absolute;
+  z-index: 3;
+  left: tokens.$vapor-left;
+  top: tokens.$vapor-top;
+  width: tokens.$vapor-width;
+  height: tokens.$vapor-height;
+  overflow: hidden;
+  mask-image: tokens.$vapor-mask;
+  pointer-events: none;
+  opacity: 0.28;
+  animation: potion-vapor 6s ease-in-out infinite alternate;
+}
+
+.cauldron-vapor img {
+  position: absolute;
+  bottom: 0;
+  width: tokens.$size-full;
+  height: tokens.$vapor-texture-height;
+  object-fit: contain;
+}
+
+.cauldron-vapor[hidden] {
+  display: none;
+}
+
+@keyframes potion-vapor {
+  from {
+    transform: translateY(2px) scale(0.96);
+    opacity: 0.2;
+  }
+
+  to {
+    transform: translateY(-6px) scale(1.02);
+    opacity: 0.35;
+  }
+}
+
 .potion-liquid-image {
   position: absolute;
   width: tokens.$size-full;
@@ -68,7 +106,8 @@
   animation-delay: -2800ms;
 }
 
-.is-paused .cauldron-liquid * {
+.is-paused .cauldron-liquid *,
+.is-paused .cauldron-vapor {
   animation-play-state: paused;
 }
 
@@ -115,7 +154,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cauldron-liquid * {
+  .cauldron-liquid *,
+  .cauldron-vapor {
     animation: none;
   }
 }

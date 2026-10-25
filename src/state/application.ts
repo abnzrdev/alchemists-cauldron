@@ -243,7 +243,7 @@ export function mountGame(root: HTMLElement): () => void {
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pour-out" disabled>Pour Out</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><div class="run-actions"><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pour-out" disabled>Pour Out</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div></div>';
     render();
     persist();
     if (saved) {

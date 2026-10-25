@@ -20,18 +20,30 @@
   padding: tokens.$space-12;
   border: 1px solid var(--color-bronze);
   border-radius: tokens.$radius-12;
-  background: var(--color-panel-recess);
+  background: tokens.$card-surface;
   color: var(--color-parchment);
-  box-shadow: tokens.$game-panel-shadow;
+  box-shadow: tokens.$card-shadow;
   font-family: tokens.$font-body;
   font-size: tokens.$font-size-game;
   text-align: left;
   cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.ingredient-card::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid tokens.$ornate-inset;
+  border-radius: tokens.$card-inset-radius;
+  pointer-events: none;
 }
 
 .ingredient-card:enabled:hover {
   border-color: var(--color-gold);
-  background: var(--color-deep-green);
+  box-shadow: tokens.$drop-zone-shadow;
 }
 
 .ingredient-card:disabled {
@@ -52,6 +64,15 @@
   gap: tokens.$space-6;
   padding-right: tokens.$size-28;
   line-height: 1.05;
+}
+
+.ingredient-card-heading > span {
+  font-size: tokens.$card-title-size;
+}
+
+.ingredient-card-heading .ingredient-glyph {
+  width: tokens.$card-art-mobile-size;
+  height: tokens.$card-art-mobile-size;
 }
 
 .ingredient-glyph {
@@ -83,6 +104,7 @@
   border: 1px solid var(--color-bronze);
   border-radius: tokens.$radius-round;
   color: var(--color-gold);
+  background: var(--color-charcoal);
   text-align: center;
 }
 
@@ -142,14 +164,30 @@
   padding: tokens.$space-8 tokens.$space-16;
   border: 1px solid var(--color-bronze);
   border-radius: tokens.$radius-12;
-  background: var(--color-deep-green);
+  background: tokens.$card-surface;
   color: var(--color-parchment);
   font: inherit;
   cursor: pointer;
+  box-shadow: tokens.$action-inset-shadow;
+  transition:
+    border-color 180ms ease,
+    filter 180ms ease;
 }
 
-.run-button:hover {
+.run-button:enabled:hover {
   border-color: var(--color-gold);
+  filter: brightness(1.15);
+}
+
+.run-button:enabled:active {
+  filter: brightness(0.85);
+}
+
+.run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: tokens.$action-gap;
 }
 
 @media (width < 1024px) {
@@ -159,9 +197,15 @@
 }
 
 .parameter-bars {
+  box-sizing: border-box;
   width: tokens.$size-full;
   font-family: tokens.$font-body;
   font-size: tokens.$font-size-stat;
+  padding: tokens.$size-4 tokens.$space-12;
+  border: 1px solid var(--color-bronze);
+  border-radius: tokens.$card-inset-radius;
+  background: tokens.$bar-panel-surface;
+  box-shadow: tokens.$bar-inset-shadow;
 }
 
 .recipe-title {
@@ -172,12 +216,18 @@
 }
 
 .parameter-row {
-  margin: tokens.$space-8 0;
+  margin: tokens.$size-4 0;
+  line-height: 1.05;
 }
 
 .parameter-label {
   display: flex;
   justify-content: space-between;
+}
+
+.parameter-label output {
+  color: tokens.$bar-value-color;
+  font-variant-numeric: tabular-nums;
 }
 
 .parameter-track {
@@ -193,8 +243,8 @@
   left: var(--target-start);
   width: var(--target-width);
   height: tokens.$size-full;
-  background: var(--color-bronze);
-  opacity: 0.6;
+  background: tokens.$bar-target-surface;
+  opacity: 0.85;
 }
 
 .parameter-zero {
@@ -230,8 +280,39 @@
 }
 
 .brew-button {
-  margin-right: tokens.$space-8;
   border-color: var(--color-gold);
+}
+
+@media (width >= 1200px) {
+  .ingredient-card {
+    display: grid;
+    grid-template-columns: tokens.$card-art-featured-size minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: tokens.$space-6 tokens.$space-8;
+  }
+
+  .ingredient-card-heading {
+    display: contents;
+  }
+
+  .ingredient-card-heading .ingredient-glyph {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    width: tokens.$card-art-featured-size;
+    height: tokens.$card-art-featured-size;
+  }
+
+  .ingredient-card-heading > span {
+    grid-column: 2;
+    padding-right: tokens.$space-16;
+  }
+
+  .ingredient-card-stats {
+    grid-column: 2;
+    margin-top: 0;
+  }
 }
 
 .run-button:disabled {

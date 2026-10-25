@@ -194,7 +194,7 @@ $game-panel-shadow:
   0 4px 12px var(--color-shadow);
 $space-24: 24px;
 $active-hero-compact-width: min(100%, 300px);
-$bar-height: 8px;
+$bar-height: 10px;
 $bar-glow: 0 0 8px #7eb77c;
 $font-size-run-counter: 52px;
 $time-bar-height: 7px;
@@ -218,6 +218,46 @@ $brew-failure-glow: radial-gradient(
 );
 $fx-window-top: -72px;
 $ingredient-art-size: 48px;
+$card-art-featured-size: 84px;
+$card-art-mobile-size: 56px;
+$card-title-size: 18px;
+$card-inset-radius: 8px;
+$card-surface: linear-gradient(135deg, #0c241b, #071711 65%, #10291d);
+$ornate-inset: rgb(201 155 69 / 32%);
+$card-shadow:
+  inset 0 0 22px rgb(0 0 0 / 45%),
+  0 5px 16px rgb(0 0 0 / 45%);
+$bar-panel-surface: linear-gradient(135deg, #0a2119, #07120d);
+$bar-value-color: #e8cc8b;
+$bar-target-surface: linear-gradient(90deg, #69542c, #b3914a, #69542c);
+$action-gap: 8px;
+$action-inset-shadow:
+  inset 0 0 0 3px var(--color-charcoal),
+  inset 0 0 0 4px $ornate-inset;
+$bar-inset-shadow: inset 0 0 0 3px var(--color-charcoal);
+$alchemy-ring-surface:
+  radial-gradient(
+    circle at 22% 38%,
+    rgb(201 155 69 / 35%) 0 1px,
+    transparent 2px
+  ),
+  radial-gradient(
+    circle at 73% 22%,
+    rgb(201 155 69 / 28%) 0 1px,
+    transparent 2px
+  ),
+  radial-gradient(
+    circle at 82% 67%,
+    rgb(201 155 69 / 25%) 0 1px,
+    transparent 2px
+  ),
+  radial-gradient(ellipse, rgb(34 106 66 / 12%), transparent 65%);
+$vapor-width: 340px;
+$vapor-height: 105px;
+$vapor-texture-height: 255px;
+$vapor-left: 130px;
+$vapor-top: -20px;
+$vapor-mask: linear-gradient(transparent, #000 25%, #000 68%, transparent 90%);
 $liquid-left: 113px;
 $liquid-top: 23px;
 $liquid-width: 374px;

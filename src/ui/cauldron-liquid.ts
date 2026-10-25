@@ -5,12 +5,14 @@ export function renderCauldronLiquid(): string {
     <img class="potion-liquid-image" src="${asset('effects/potion-liquid-emerald', 'webp')}" alt="" draggable="false" />
     <span class="liquid-ripple"></span><span class="liquid-ripple liquid-ripple-delayed"></span>
     <i class="liquid-bubble"></i><i class="liquid-bubble"></i><i class="liquid-bubble"></i>
-  </div>`;
+  </div><span class="cauldron-vapor" aria-hidden="true" hidden><img src="${asset('effects/emerald-magic-vapor', 'webp')}" alt="" draggable="false" /></span>`;
 }
 
 export function updateCauldronLiquid(root: HTMLElement, filled: boolean): void {
   const liquid = root.querySelector<HTMLElement>('.cauldron-liquid');
   if (liquid) liquid.hidden = !filled;
+  const vapor = root.querySelector<HTMLElement>('.cauldron-vapor');
+  if (vapor) vapor.hidden = !filled;
   root
     .querySelector<HTMLImageElement>('.cauldron')
     ?.setAttribute(
