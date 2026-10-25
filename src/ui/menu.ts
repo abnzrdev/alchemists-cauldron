@@ -1,5 +1,6 @@
+import { formatTime } from '../logic/timer.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
-import { loadDifficulty, saveDifficulty } from '../storage/save.ts';
+import { loadDifficulty, saveDifficulty, loadGame } from '../storage/save.ts';
 import type { Difficulty, DifficultySettings } from '../data/difficulty';
 import {
   clearLeaderboard,
@@ -39,8 +40,18 @@ export function bindStartScreen(root: HTMLElement): () => void {
       `${rules.shelfSize} ingredients | Up to ${rules.cauldronLimit} per mix | ${rules.startTime} seconds | ${rules.lives} lives`;
     get('#difficulty-details').textContent =
       `Tolerance +/-${rules.tolerance} | ${rules.scorePerBrew} points per brew | +${rules.timeBonus}s bonus | No reactions`;
-    get('#resume-summary').textContent =
-      'Choose your difficulty before starting. Saved-run continuation follows in US 2.2.';
+    const saved = loadGame();
+    get<HTMLButtonElement>('[data-action="continue"]').hidden =
+      !saved || running();
+    get('#resume-summary').textContent = saved
+      ? 'Saved ' +
+        DIFFICULTY_SETTINGS[saved.difficulty].label +
+        ' run | ' +
+        saved.score +
+        ' points | ' +
+        formatTime(saved.timeLeft) +
+        ' remaining'
+      : 'No unfinished game saved.';
   }
   function refreshLeaderboard(): void {
     const entries = loadLeaderboard(filter);
@@ -126,6 +137,18 @@ export function bindStartScreen(root: HTMLElement): () => void {
       }
       if (button.id === 'start-game' || button.dataset.action === 'new-game')
         requestNewGame();
+      if (button.dataset.action === 'continue' && !running()) {
+        const saved = loadGame();
+        if (saved) {
+          returnDialog = null;
+          root
+            .querySelectorAll<HTMLDialogElement>('dialog[open]')
+            .forEach((dialog) => dialog.close());
+          root.dispatchEvent(
+            new CustomEvent('game:continue', { bubbles: true, detail: saved }),
+          );
+        } else refreshMenu();
+      }
       if (button.dataset.action === 'clear-leaderboard') {
         get<HTMLDialogElement>('#clear-confirmation').showModal();
         get<HTMLButtonElement>('[data-action="cancel-clear"]').focus();
@@ -166,7 +189,14 @@ export function bindStartScreen(root: HTMLElement): () => void {
       { signal },
     ),
   );
-  window.addEventListener('storage', refreshLeaderboard, { signal });
+  window.addEventListener(
+    'storage',
+    () => {
+      refreshLeaderboard();
+      refreshMenu();
+    },
+    { signal },
+  );
   get<HTMLSelectElement>('#leaderboard-difficulty').addEventListener(
     'change',
     (event) => {

@@ -3,7 +3,7 @@
 on:
   pull_request:
   push:
-    branches: [story-2]
+    branches: [story-2, story-3]
 
 permissions:
   contents: read

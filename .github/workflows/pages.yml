@@ -1,8 +1,8 @@
-name: Deploy Level 1
+name: Deploy Game
 
 on:
   push:
-    branches: [story-2]
+    branches: [story-3]
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/story-2'
+    if: github.ref == 'refs/heads/story-3'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

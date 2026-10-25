@@ -286,3 +286,7 @@
 .is-hard .hero-art {
   width: tokens.$hard-hero-width;
 }
+
+.save-status:empty {
+  display: none;
+}
