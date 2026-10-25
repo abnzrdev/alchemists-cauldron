@@ -1,4 +1,6 @@
 import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
+import { getReactions } from '../data/reactions.ts';
+import { evaluateReactions } from '../logic/reactions.ts';
 import { bindIngredientTooltip } from '../ui/ingredient-tooltip.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
@@ -56,11 +58,19 @@ export function mountGame(root: HTMLElement): () => void {
   function selectIngredient(id: string): void {
     tick();
     if (!state) return;
+    const previous = state;
     const next = addIngredient(state, id);
     if (next === state) return;
     state = next;
+    clock?.reset(state.timeLeft);
     persist();
     render();
+    if (state.lives < previous.lives)
+      get('#brew-feedback').textContent =
+        'Volatile Mix! One life lost; the cauldron was emptied.';
+    else if (state.timeLeft < previous.timeLeft)
+      get('#brew-feedback').textContent = 'Steam Burst! Five seconds lost.';
+    if (finishIfNeeded()) return;
     const same = root.querySelector<HTMLButtonElement>(
       `[data-ingredient="${id}"]:not(:disabled)`,
     );
@@ -92,7 +102,11 @@ export function mountGame(root: HTMLElement): () => void {
       panel.className = 'run-panel';
       recipe.append(panel);
     }
-    panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}`;
+    const active = evaluateReactions(
+      state.cauldronIngredients,
+      getReactions(state.difficulty),
+    ).active;
+    panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}<p class="reaction-status" role="status">${active.length ? `Active: ${active.map((item) => item.name).join(', ')}` : ''}</p>`;
     get('#game-score').textContent = String(state.score);
     updateTime();
     get('#game-lives').textContent =

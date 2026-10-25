@@ -3,7 +3,8 @@ import { clearCauldron } from '../state/game-state.ts';
 import { DIFFICULTY_SETTINGS } from '../data/difficulty.ts';
 import { pickRecipe } from '../data/recipes.ts';
 import type { Recipe } from '../data/recipes.ts';
-import { calculateCauldron, inRange, PARAMETERS } from './cauldron.ts';
+import { inRange, PARAMETERS } from './cauldron.ts';
+import { calculateMixture } from './reactions.ts';
 import type { CauldronValues } from './cauldron.ts';
 export function matchesRecipe(values: CauldronValues, recipe: Recipe): boolean {
   return PARAMETERS.every((key) =>
@@ -27,7 +28,7 @@ export function brew(
   const cleared = clearCauldron(state);
   if (
     matchesRecipe(
-      calculateCauldron(state.cauldronIngredients),
+      calculateMixture(state.cauldronIngredients, state.difficulty),
       state.activeRecipe,
     )
   ) {

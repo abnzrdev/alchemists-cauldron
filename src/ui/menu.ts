@@ -39,7 +39,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
     get('#difficulty-summary').textContent =
       `${rules.shelfSize} ingredients | Up to ${rules.cauldronLimit} per mix | ${rules.startTime} seconds | ${rules.lives} lives`;
     get('#difficulty-details').textContent =
-      `Tolerance +/-${rules.tolerance} | ${rules.scorePerBrew} points per brew | +${rules.timeBonus}s bonus | No reactions`;
+      `Tolerance +/-${rules.tolerance} | ${rules.scorePerBrew} points per brew | +${rules.timeBonus}s bonus | ${rules.reactionCount} reactions`;
     const saved = loadGame();
     get<HTMLButtonElement>('[data-action="continue"]').hidden =
       !saved || running();

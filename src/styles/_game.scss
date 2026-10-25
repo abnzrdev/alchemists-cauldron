@@ -103,6 +103,16 @@
   margin: tokens.$space-8 auto;
 }
 
+.reaction-status {
+  margin: 0;
+  color: var(--color-gold);
+  font-size: tokens.$font-size-stat;
+}
+
+.reaction-status:empty {
+  display: none;
+}
+
 .ingredient-counter-full {
   color: var(--color-gold);
 }
