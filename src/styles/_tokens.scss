@@ -189,3 +189,12 @@ $panel-small-text: 16px;
 $panel-option-text: 20px;
 $panel-summary-text: 18px;
 $panel-title-mobile: 28px;
+$active-shelf-width: min(100%, 290px);
+$active-hero-width: min(100%, 380px);
+$active-card-height: 136px;
+$font-size-game: 17px;
+$font-size-stat: 16px;
+$game-panel-shadow:
+  inset 0 0 18px var(--color-shadow),
+  0 4px 12px var(--color-shadow);
+$space-24: 24px;

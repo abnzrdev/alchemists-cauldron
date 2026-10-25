@@ -1,0 +1,142 @@
+@use 'tokens';
+
+.is-running .slot-group {
+  width: tokens.$active-shelf-width;
+}
+
+.is-running .hero-art {
+  width: tokens.$active-hero-width;
+  margin: auto;
+}
+
+.ingredient-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  width: tokens.$size-full;
+  min-height: tokens.$active-card-height;
+  padding: tokens.$space-12;
+  border: 1px solid var(--color-bronze);
+  border-radius: tokens.$radius-12;
+  background: var(--color-panel-recess);
+  color: var(--color-parchment);
+  box-shadow: tokens.$game-panel-shadow;
+  font-family: tokens.$font-body;
+  font-size: tokens.$font-size-game;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ingredient-card:enabled:hover {
+  border-color: var(--color-gold);
+  background: var(--color-deep-green);
+}
+
+.ingredient-card:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.ingredient-card-empty {
+  border-style: dashed;
+  opacity: 0.4;
+}
+
+.ingredient-card-heading {
+  display: flex;
+  align-items: center;
+  gap: tokens.$space-6;
+  padding-right: tokens.$space-16;
+  line-height: 1.05;
+}
+
+.ingredient-glyph {
+  flex: none;
+  width: tokens.$size-28;
+  height: tokens.$size-28;
+}
+
+.ingredient-card-stats {
+  display: grid;
+  width: tokens.$size-full;
+  margin-top: tokens.$space-6;
+  font-size: tokens.$font-size-stat;
+  line-height: 1.2;
+
+  > span {
+    display: flex;
+    justify-content: space-between;
+    gap: tokens.$space-6;
+  }
+}
+
+.stock-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: tokens.$size-19;
+  border: 1px solid var(--color-bronze);
+  border-radius: tokens.$radius-round;
+  color: var(--color-gold);
+  text-align: center;
+}
+
+.is-running .cauldron-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: tokens.$space-8;
+}
+
+.run-panel,
+.run-primary {
+  font-family: tokens.$font-body;
+  font-size: tokens.$font-size-game;
+  text-align: center;
+}
+
+.ingredient-counter {
+  margin: tokens.$space-8 auto;
+}
+
+.ingredient-counter-full {
+  color: var(--color-gold);
+}
+
+.mixture-order {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: tokens.$space-6 tokens.$space-16;
+  min-height: tokens.$size-44;
+  padding-left: tokens.$space-24;
+  margin: tokens.$space-8;
+  font-size: tokens.$font-size-stat;
+  text-align: left;
+}
+
+.run-primary p {
+  margin: 0 0 tokens.$space-8;
+}
+
+.run-button {
+  min-height: tokens.$size-44;
+  padding: tokens.$space-8 tokens.$space-16;
+  border: 1px solid var(--color-bronze);
+  border-radius: tokens.$radius-12;
+  background: var(--color-deep-green);
+  color: var(--color-parchment);
+  font: inherit;
+  cursor: pointer;
+}
+
+.run-button:hover {
+  border-color: var(--color-gold);
+}
+
+@media (width < 1024px) {
+  .is-running .slot-group {
+    display: contents;
+  }
+}

@@ -1,11 +1,12 @@
-﻿import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty';
+import { LEVEL_ONE_SETTINGS } from '../data/levelOne';
+import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty';
 import type { Difficulty, DifficultySettings } from '../data/difficulty';
 import {
   clearLeaderboard,
   formatResultDate,
   loadLeaderboard,
 } from '../storage/leaderboard';
-import { loadDifficulty, loadGame, saveDifficulty } from '../storage/save';
+import { loadGame, saveDifficulty } from '../storage/save';
 import type { SavedGame } from '../storage/save';
 
 export interface StartGameRequest {
@@ -22,7 +23,7 @@ export interface ContinueGameRequest {
 export function bindStartScreen(root: HTMLElement): () => void {
   const controller = new AbortController();
   const { signal } = controller;
-  let difficulty = loadDifficulty();
+  let difficulty: Difficulty = 'medium';
   let dialogTrigger: HTMLElement | null = null;
   let clearDifficulty: Difficulty | null = null;
   const get = <T extends HTMLElement>(selector: string): T => {
@@ -41,16 +42,14 @@ export function bindStartScreen(root: HTMLElement): () => void {
           String(button.dataset.difficulty === difficulty),
         );
       });
-    const rules = DIFFICULTY_SETTINGS[difficulty];
+    const rules = LEVEL_ONE_SETTINGS;
     get('#difficulty-summary').textContent =
       `${rules.shelfSize} ingredients · Up to ${rules.cauldronLimit} per mix · ${rules.startTime} seconds · ${rules.lives} lives`;
     get('#difficulty-details').textContent =
       `Tolerance ±${rules.tolerance} · ${rules.scorePerBrew} points per brew · +${rules.timeBonus}s bonus · ${rules.reactionCount} reactions`;
-    const saved = loadGame();
-    get<HTMLButtonElement>('[data-action="continue"]').hidden = saved === null;
-    get('#resume-summary').textContent = saved
-      ? `${DIFFICULTY_SETTINGS[saved.difficulty].label} · ${saved.score} points · ${Math.ceil(saved.timeLeft)} seconds left. Continue opens paused.`
-      : 'No unfinished game to continue.';
+    get<HTMLButtonElement>('[data-action="continue"]').hidden = true;
+    get('#resume-summary').textContent =
+      'Level 1 uses Medium. Difficulty selection and saved-run continuation arrive in Level 2.';
   }
 
   function refreshLeaderboard(): void {
@@ -112,7 +111,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
     const detail: StartGameRequest = {
       mode: 'new',
       difficulty,
-      settings: { ...DIFFICULTY_SETTINGS[difficulty] },
+      settings: { ...LEVEL_ONE_SETTINGS },
     };
     // The run module commits the replacement save once it has created a new state.
     root.dispatchEvent(

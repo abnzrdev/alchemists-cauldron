@@ -1,3 +1,4 @@
+import { mountLevelOne } from './state/application';
 import './styles/main.scss';
 import {
   bindStartScreen,
@@ -14,10 +15,12 @@ if (!app) {
 app.innerHTML = renderStartScreen();
 const compositionObserver = observeCompositionSizing(app);
 const unbindStartScreen = bindStartScreen(app);
+const unbindGame = mountLevelOne(app);
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     compositionObserver.disconnect();
     unbindStartScreen();
+    unbindGame();
   });
 }
