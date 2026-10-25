@@ -262,3 +262,12 @@
     animation: none;
   }
 }
+
+.is-paused > .game-header,
+.is-paused > .cauldron-hero,
+.is-paused .ingredient-card,
+.is-paused > .primary-action {
+  filter: blur(12px);
+  pointer-events: none;
+  user-select: none;
+}

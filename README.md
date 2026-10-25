@@ -117,3 +117,7 @@ The current recipe panel shows its fantasy name, three target ranges, and live i
 ### Timer and Game Over (US 1.4)
 
 A run begins with 02:30 and three lives. The shrinking bar and MM:SS label use timestamp differences, including delayed callbacks; below 15 seconds the timer pulses red (reduced-motion respected). Runs end for Time is up, No lives left, or Out of ingredients. An empty shelf does not end a run while a mixture can still be brewed. The Game Over dialog shows the reason and score; Play again creates fresh stock, recipe, time and lives. Return to Menu restores the empty Start Screen.
+
+### Pause (US 1.5)
+
+Pause freezes the exact remaining time and blocks ingredient selection and brewing. The field is blurred and inert while the Resume / Exit to Menu dialog is open. Resume continues the same recipe, stock and mixture; Exit to Menu discards the run. Switching to a hidden browser tab pauses automatically and returning requires explicit Resume. Help remains available and pauses the run while the rules are read. Escape in the pause dialog resumes.
