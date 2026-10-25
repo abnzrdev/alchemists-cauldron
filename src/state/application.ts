@@ -1,4 +1,5 @@
 import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
+import { updateCauldronLiquid } from '../ui/cauldron-liquid.ts';
 import { getReactions } from '../data/reactions.ts';
 import { evaluateReactions } from '../logic/reactions.ts';
 import { bindIngredientTooltip } from '../ui/ingredient-tooltip.ts';
@@ -101,6 +102,7 @@ export function mountGame(root: HTMLElement): () => void {
     get('.cauldron-content').innerHTML = state.cauldronIngredients
       .map(renderIngredientIcon)
       .join('');
+    updateCauldronLiquid(root, state.cauldronIngredients.length > 0);
     let panel = root.querySelector<HTMLElement>('.run-panel');
     if (!panel) {
       const recipe = document.createElement('section');
@@ -274,6 +276,7 @@ export function mountGame(root: HTMLElement): () => void {
     get('.slot-group-left').innerHTML = renderEmptySlots(1);
     get('.slot-group-right').innerHTML = renderEmptySlots(4);
     get('.cauldron-content').replaceChildren();
+    updateCauldronLiquid(root, false);
     root.querySelector('.recipe-panel')?.remove();
     get('#game-time').textContent = '0';
     get('#game-score').textContent = '0';
