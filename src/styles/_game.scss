@@ -297,3 +297,19 @@
   border-radius: tokens.$radius-12;
   box-shadow: tokens.$drop-zone-shadow;
 }
+
+.ingredient-tooltip {
+  box-sizing: border-box;
+  position: fixed;
+  z-index: tokens.$tooltip-layer;
+  width: tokens.$tooltip-width;
+  padding: tokens.$space-12;
+  border: 1px solid var(--color-gold);
+  border-radius: tokens.$radius-12;
+  background: var(--color-charcoal);
+  color: var(--color-parchment);
+  box-shadow: tokens.$game-panel-shadow;
+  font-size: tokens.$font-size-stat;
+  font-family: tokens.$font-body;
+  pointer-events: none;
+}

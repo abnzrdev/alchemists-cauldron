@@ -206,3 +206,5 @@ $color-danger: #e58575;
 $hard-card-height: 108px;
 $hard-hero-width: min(100%, 250px);
 $drop-zone-shadow: 0 0 24px var(--color-frame-inset);
+$tooltip-width: min(220px, calc(100vw - 16px));
+$tooltip-layer: 100;
