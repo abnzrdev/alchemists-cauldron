@@ -1,0 +1,190 @@
+﻿@use 'tokens';
+
+.game-dialog {
+  max-height: calc(100svh - 32px);
+  overflow-y: auto;
+}
+
+.game-dialog [hidden] {
+  display: none;
+}
+
+.game-dialog.menu-dialog,
+.game-dialog.leaderboard-dialog {
+  width: tokens.$panel-width;
+  max-width: tokens.$panel-width;
+}
+
+.game-dialog .panel-intro,
+.resume-summary,
+.difficulty-details {
+  margin: tokens.$space-8 0 tokens.$space-16;
+  color: var(--color-panel-muted);
+  font-size: tokens.$panel-small-text;
+  line-height: 1.4;
+}
+
+.difficulty-picker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.difficulty-picker legend {
+  margin-bottom: tokens.$space-8;
+}
+
+.difficulty-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: tokens.$space-8;
+}
+
+.game-dialog .difficulty-button {
+  min-height: 44px;
+  padding: tokens.$space-8;
+  background: transparent;
+  font-size: tokens.$panel-option-text;
+}
+
+.game-dialog .difficulty-button[aria-pressed='true'] {
+  background: var(--color-gold);
+  color: var(--color-charcoal);
+  border-color: var(--color-seal);
+}
+
+.difficulty-summary {
+  margin: tokens.$space-12 0 tokens.$space-8;
+  font-size: tokens.$panel-summary-text;
+  line-height: 1.4;
+}
+
+.menu-actions {
+  display: grid;
+  gap: tokens.$space-8;
+}
+
+.game-dialog .menu-primary {
+  border-color: var(--color-seal);
+  background: var(--color-gold);
+  color: var(--color-charcoal);
+}
+
+.game-dialog button {
+  min-height: 44px;
+}
+
+.game-dialog button:hover {
+  filter: brightness(1.12);
+}
+
+.game-dialog button:active {
+  filter: brightness(0.92);
+}
+
+.menu-actions .resume-summary {
+  margin: 0 0 tokens.$space-8;
+}
+
+.panel-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: tokens.$space-8;
+  margin-top: tokens.$space-16;
+}
+
+.panel-footer form {
+  margin: 0;
+}
+
+.rules-list {
+  padding-left: tokens.$space-28;
+}
+
+.rules-list li + li {
+  margin-top: tokens.$space-8;
+}
+
+.leaderboard-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: tokens.$space-8;
+  margin-bottom: tokens.$space-16;
+}
+
+.leaderboard-filter select {
+  min-height: 44px;
+  padding: tokens.$space-8 tokens.$space-12;
+  border: 1px solid var(--color-gold);
+  border-radius: tokens.$radius-6;
+  background: var(--color-dark-wood);
+  color: var(--color-parchment);
+  font: inherit;
+}
+
+.leaderboard-scroll {
+  overflow-x: auto;
+  margin-bottom: tokens.$space-16;
+}
+
+.leaderboard-table {
+  width: tokens.$size-full;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-size: tokens.$panel-small-text;
+  text-align: left;
+}
+
+.leaderboard-table caption {
+  padding-bottom: tokens.$space-8;
+  color: var(--color-gold);
+  text-align: left;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: tokens.$space-8;
+  border-bottom: 1px solid var(--color-frame-inset);
+}
+
+.leaderboard-table td:last-child {
+  white-space: nowrap;
+}
+
+.clear-confirmation {
+  margin-top: tokens.$space-16;
+  padding: tokens.$space-16;
+  border: 1px solid var(--color-gold);
+  border-radius: tokens.$radius-6;
+  background: var(--color-dark-wood);
+}
+
+.clear-confirmation h3 {
+  margin: 0;
+}
+
+.clear-confirmation button + button {
+  margin-left: tokens.$space-8;
+}
+
+.panel-status:empty {
+  display: none;
+}
+
+@media (width < 600px) {
+  dialog.game-dialog {
+    padding: tokens.$space-16;
+  }
+
+  dialog.game-dialog h2 {
+    font-size: tokens.$panel-title-mobile;
+  }
+
+  .panel-footer button {
+    flex: 1;
+  }
+}

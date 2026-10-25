@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path id="Ring inner plate" d="M79.5 40C79.5 61.8152 61.8152 79.5 40 79.5C18.1848 79.5 0.5 61.8152 0.5 40C0.5 18.1848 18.1848 0.5 40 0.5C61.8152 0.5 79.5 18.1848 79.5 40Z" fill="url(#paint0_radial_0_222)" stroke="#8B6534"/>
+<defs>
+<radialGradient id="paint0_radial_0_222" cx="0" cy="0" r="1" gradientTransform="matrix(40 16 0 56 40 24)" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2A1E10"/>
+<stop offset="1" stop-color="#120C06"/>
+</radialGradient>
+</defs>
+</svg>

@@ -1,0 +1,129 @@
+﻿@use 'tokens';
+
+.workshop-environment {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: tokens.$workshop-wall-background;
+}
+
+.workshop-arch {
+  position: absolute;
+  inset: 7% 24% 16%;
+  border: 22px solid var(--color-stone-edge);
+  border-radius: tokens.$arch-radius;
+  background: tokens.$arch-background;
+  box-shadow: tokens.$arch-shadow;
+}
+
+.workshop-column {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: tokens.$column-width;
+  border-inline: 1px solid var(--color-stone-seam);
+  background: tokens.$column-background;
+  box-shadow: tokens.$column-shadow;
+}
+
+.workshop-column-left {
+  left: 12%;
+}
+
+.workshop-column-right {
+  right: 12%;
+}
+
+.workshop-candle,
+.workshop-ember {
+  position: absolute;
+}
+
+.workshop-candle {
+  top: 42%;
+  transform: scale(1.25);
+  filter: drop-shadow(0 0 18px var(--color-candle-halo));
+}
+
+.workshop-candle-left {
+  left: calc(50% - 300px);
+}
+
+.workshop-candle-right {
+  right: calc(50% - 300px);
+}
+
+.workshop-ember {
+  top: 72%;
+  opacity: 0.32;
+}
+
+.workshop-ember-left {
+  left: 18%;
+}
+
+.workshop-ember-right {
+  right: 18%;
+}
+
+@media (width < 1024px) {
+  .workshop-arch {
+    inset: 8% 14% 45%;
+  }
+
+  .workshop-column-left {
+    left: 3%;
+  }
+
+  .workshop-column-right {
+    right: 3%;
+  }
+
+  .workshop-candle {
+    top: 28%;
+  }
+
+  .workshop-candle-left {
+    left: 9%;
+  }
+
+  .workshop-candle-right {
+    right: 9%;
+  }
+}
+
+@media (width < 768px) {
+  .workshop-arch {
+    inset: 12% 7% 57%;
+    border-width: 12px;
+  }
+
+  .workshop-column-left {
+    left: 0;
+  }
+
+  .workshop-column-right {
+    right: 0;
+  }
+
+  .workshop-candle {
+    top: 22%;
+    opacity: 0.7;
+    transform: none;
+  }
+
+  .workshop-candle-left {
+    left: 3%;
+  }
+
+  .workshop-candle-right {
+    right: 3%;
+  }
+}
+
+@media (width >= 1024px) {
+  .workshop-environment {
+    position: fixed;
+  }
+}
