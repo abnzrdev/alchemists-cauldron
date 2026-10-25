@@ -1,0 +1,15 @@
+#!/bin/sh
+
+commit_message=$(cat "$1")
+
+if [ -z "$commit_message" ]; then
+  echo "Error: Commit message cannot be empty."
+  exit 1
+fi
+
+if ! echo "$commit_message" | grep -Eq "^(feat|fix|docs|style|refactor|test|chore|build|ci|perf)(\([a-zA-Z0-9_-]+\))?: .+"; then
+  echo "Error: Invalid commit message format."
+  echo "Expected: type: description"
+  echo "Example: feat: add game board"
+  exit 1
+fi
