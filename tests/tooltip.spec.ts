@@ -77,6 +77,17 @@ test('tooltips reposition left/up at edges and never overflow responsive viewpor
         box.y + box.height <= bars.y ||
         box.y >= bars.y + bars.height,
     ).toBe(true);
+    for (const control of await page
+      .locator('.circular-control, .primary-action')
+      .all()) {
+      const bounds = (await control.boundingBox())!;
+      expect(
+        box.x + box.width <= bounds.x ||
+          box.x >= bounds.x + bounds.width ||
+          box.y + box.height <= bounds.y ||
+          box.y >= bounds.y + bounds.height,
+      ).toBe(true);
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

@@ -27,18 +27,25 @@ export function bindIngredientTooltip(
       tooltip.getBoundingClientRect(),
       { width: innerWidth, height: innerHeight },
     );
-    const bars = root.querySelector('.parameter-bars')?.getBoundingClientRect();
     const size = tooltip.getBoundingClientRect();
-    if (
-      bars &&
-      position.left < bars.right &&
-      position.left + size.width > bars.left &&
-      position.top < bars.bottom &&
-      position.top + size.height > bars.top &&
-      bars.top - size.height - 8 >= 8
-    ) {
-      position.top = bars.top - size.height - 8;
-      position.upward = true;
+    for (const element of root.querySelectorAll(
+      '.parameter-bars, .circular-control, .primary-action',
+    )) {
+      const obstacle = element.getBoundingClientRect();
+      const above =
+        Math.min(active.getBoundingClientRect().top, obstacle.top) -
+        size.height -
+        8;
+      if (
+        position.left < obstacle.right &&
+        position.left + size.width > obstacle.left &&
+        position.top < obstacle.bottom &&
+        position.top + size.height > obstacle.top &&
+        above >= 8
+      ) {
+        position.top = above;
+        position.upward = true;
+      }
     }
     tooltip.style.left = `${position.left}px`;
     tooltip.style.top = `${position.top}px`;
