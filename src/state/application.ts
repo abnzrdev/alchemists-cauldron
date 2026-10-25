@@ -1,3 +1,4 @@
+import { mountResultEntry } from '../ui/result-entry.ts';
 import { pauseGame, resumeGame } from './pause.ts';
 import { renderPause } from '../ui/pause.ts';
 import { RunClock, formatTime, getEndReason } from '../logic/timer.ts';
@@ -19,6 +20,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
   let clock: RunClock | null = null;
   let timer: ReturnType<typeof setInterval> | undefined;
   root.insertAdjacentHTML('beforeend', renderGameOver() + renderPause());
+  const results = mountResultEntry(root);
   const get = <T extends HTMLElement>(selector: string): T => {
     const element = root.querySelector<T>(selector);
     if (!element) throw new Error(`Missing game element: ${selector}`);
@@ -78,6 +80,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
         .forEach((open) => open.close());
       get('#game-over-reason').textContent = reason;
       get('#final-score').textContent = String(state.score);
+      results.prepare(state.score);
       dialog.showModal();
     }
     return true;
@@ -185,6 +188,8 @@ export function mountLevelOne(root: HTMLElement): () => void {
           ? event.target.closest<HTMLButtonElement>('button')
           : null;
       if (!button || button.disabled) return;
+      if (button.dataset.dialog === 'menu' && state?.status === 'game-over')
+        exit();
       if (button.dataset.action === 'pause') {
         pause();
         return;
@@ -273,6 +278,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
   return () => {
     clearInterval(timer);
     abort.abort();
+    results.dispose();
     root.querySelector('#game-over-dialog')?.remove();
     root.querySelector('#pause-dialog')?.remove();
   };

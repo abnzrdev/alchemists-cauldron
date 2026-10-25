@@ -121,3 +121,7 @@ A run begins with 02:30 and three lives. The shrinking bar and MM:SS label use t
 ### Pause (US 1.5)
 
 Pause freezes the exact remaining time and blocks ingredient selection and brewing. The field is blurred and inert while the Resume / Exit to Menu dialog is open. Resume continues the same recipe, stock and mixture; Exit to Menu discards the run. Switching to a hidden browser tab pauses automatically and returning requires explicit Resume. Help remains available and pauses the run while the rules are read. Escape in the pause dialog resumes.
+
+### Level 1 leaderboard (US 1.6)
+
+Game Over asks for a name when the score qualifies for the single Level 1 Top-10. Names allow 2-15 letters, digits, spaces, underscores and hyphens. Submit once, or continue without saving. Results persist under alchemists-cauldron:leaderboard:level-1, sorted by descending score and then earlier result date. The table shows rank, name, score and DD.MM.YYYY HH:MM. Open it from Menu or Game Over. Clear Leaderboard asks for confirmation in a native in-app dialog. Broken storage is ignored; unavailable writes show an honest retry message. Difficulty-specific leaderboards and saved-run continuation remain Level 2 work.
