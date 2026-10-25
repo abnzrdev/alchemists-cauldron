@@ -15,7 +15,7 @@ Start Game or Menu > New Game starts a fresh run at the difficulty selected in M
 - Game Over shows the reason and score. Qualifying results prompt for a 2–15 character name: letters, digits, spaces, underscore or hyphen.
 - One Top-10 per difficulty persists locally, sorted by score descending and then earlier result date. Open it from Menu or Game Over. Clear Leaderboard uses an in-app confirmation. Storage errors produce a safe empty view or retry message.
 
-Before starting, six circular frames and the cauldron are empty, Time and Score are 0, and no lives appear. Help opens the rules. Easy, Medium and Hard are selectable before play. Saved-run continuation is pending US 2.2. There are no Level 1 chemical reactions.
+Before starting, six circular frames and the cauldron are empty, Time and Score are 0, and no lives appear. Help opens the rules. Easy, Medium and Hard are selectable before play. Continue Game restores a valid unfinished save in paused state. There are no Level 1 chemical reactions.
 
 ## Run locally
 
@@ -26,7 +26,7 @@ pnpm install
 pnpm dev
 ```
 
-Build with `pnpm build` and preview with `pnpm preview`. Relative production URLs support GitHub project Pages and local preview. The Deploy Level 1 workflow publishes story-2.
+Build with `pnpm build` and preview with `pnpm preview`. Relative production URLs support GitHub project Pages and local preview. The Deploy Game workflow publishes story-3 to the [shared public game](https://abnzrdev.github.io/alchemists-cauldron/).
 
 ## Verify
 
@@ -75,3 +75,11 @@ The upstream task checkout stays outside this repository in sibling rsschool-qua
 | Reward / bonus   | 100 / 15s | 200 / 10s | 300 / 5s |
 
 The Medium rules described above remain the Level 1 rules. Each difficulty uses its own official recipe pool and leaderboard. The table adds a Difficulty column and filter. Existing Level 1 results remain in the Medium list; clearing one list preserves the others. Difficulty is remembered locally and locked during a run. Reaction counts remain in configuration for Level 3; no reactions run in Level 2.
+
+## Auto-save and Continue (US 2.2)
+
+A single unfinished game is saved after ingredient selection, Brew, pause and resume, with timestamp-based time checkpoints once per displayed second. Page hiding pauses and checkpoints the run. The saved fields are difficulty, status, score, remaining time, lives, active recipe, ordered ingredients and exact stock. No running deadline or interval is restored.
+
+Open Menu after reload and choose Continue Game when a valid save exists. It opens paused; Resume starts a fresh deadline from the saved remaining time, so time spent away does not drain the paused run. Changing the next-game difficulty does not alter a continued game. A new game replaces the old save. Exit to Menu and Game Over clear it.
+
+Storage uses alchemists-cauldron:save with a versioned envelope. Missing, malformed, outdated, finished or invalid catalogue data is rejected and removed safely. Unavailable storage never blocks play; a visible message reports when progress cannot be saved. Exact numbers and data come from the official difficulty and recipe tables. Reactions and other Level 3 mechanics remain absent.
