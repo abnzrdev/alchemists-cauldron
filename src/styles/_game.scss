@@ -290,3 +290,10 @@
 .save-status:empty {
   display: none;
 }
+
+.hero-art.is-drop-target {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 4px;
+  border-radius: tokens.$radius-12;
+  box-shadow: tokens.$drop-zone-shadow;
+}

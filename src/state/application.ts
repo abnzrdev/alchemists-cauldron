@@ -1,3 +1,4 @@
+import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import {
@@ -15,7 +16,7 @@ import { RunClock, formatTime, getEndReason } from '../logic/timer.ts';
 import { renderGameOver } from '../ui/game-over.ts';
 import { brew } from '../logic/brewing.ts';
 import { updateParameterBars } from '../ui/parameter-bars.ts';
-import { addIngredient, createGame } from './game-state.ts';
+import { addIngredient, canAddIngredient, createGame } from './game-state.ts';
 import type { GameState } from './game-state.ts';
 import { renderEmptySlots } from '../ui/startScreen.ts';
 import {
@@ -42,7 +43,33 @@ export function mountGame(root: HTMLElement): () => void {
   const screen = get('.start-screen');
   const menuButton = get<HTMLButtonElement>('.circular-control-menu');
 
+  const drag = bindIngredientDrag(root, {
+    canAdd: (id) => state !== null && canAddIngredient(state, id),
+    add: selectIngredient,
+  });
+
+  function selectIngredient(id: string): void {
+    tick();
+    if (!state) return;
+    const next = addIngredient(state, id);
+    if (next === state) return;
+    state = next;
+    persist();
+    render();
+    const same = root.querySelector<HTMLButtonElement>(
+      `[data-ingredient="${id}"]:not(:disabled)`,
+    );
+    (
+      same ??
+      root.querySelector<HTMLButtonElement>(
+        '[data-ingredient]:not(:disabled)',
+      ) ??
+      get('#ingredient-counter')
+    ).focus();
+  }
+
   function render(): void {
+    drag.reset();
     if (!state) return;
     get('.slot-group-left').innerHTML = renderShelf(state, 0);
     get('.slot-group-right').innerHTML = renderShelf(state, 1);
@@ -196,6 +223,7 @@ export function mountGame(root: HTMLElement): () => void {
   }
 
   function exit(): void {
+    drag.reset();
     clearSave();
     concealField(false);
     get<HTMLDialogElement>('#pause-dialog').close();
@@ -282,7 +310,7 @@ export function mountGame(root: HTMLElement): () => void {
         exit();
         return;
       }
-      if (button.dataset.ingredient || button.dataset.action === 'brew') {
+      if (button.dataset.action === 'brew') {
         tick();
         if (state?.status !== 'playing') return;
       }
@@ -305,20 +333,7 @@ export function mountGame(root: HTMLElement): () => void {
         return;
       }
       const id = button.dataset.ingredient;
-      if (!id || !state) return;
-      state = addIngredient(state, id);
-      persist();
-      render();
-      const same = root.querySelector<HTMLButtonElement>(
-        `[data-ingredient="${id}"]:not(:disabled)`,
-      );
-      (
-        same ??
-        root.querySelector<HTMLButtonElement>(
-          '[data-ingredient]:not(:disabled)',
-        ) ??
-        get('#ingredient-counter')
-      ).focus();
+      if (id) selectIngredient(id);
     },
     { signal: abort.signal },
   );
@@ -354,6 +369,7 @@ export function mountGame(root: HTMLElement): () => void {
     clearInterval(timer);
     abort.abort();
     results.dispose();
+    drag.dispose();
     root.querySelector('#game-over-dialog')?.remove();
     root.querySelector('#pause-dialog')?.remove();
   };
