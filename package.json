@@ -9,18 +9,24 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:unit": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "test": "pnpm test:unit && pnpm test:browser"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "eslint": "^10.13.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.10",
+    "sass-embedded": "^1.106.1",
     "stylelint": "^17.16.0",
     "stylelint-config-standard-scss": "^17.0.0",
     "stylelint-declaration-strict-value": "^1.12.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.72.0",
     "vite": "^8.3.0"
-  }
+  },
+  "packageManager": "pnpm@12.15.0"
 }

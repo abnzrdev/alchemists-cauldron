@@ -1,48 +1,66 @@
 # Alchemist's Cauldron
 
-A browser-based potion brewing game developed for the RS School Qualifying Stage.
+A TypeScript + Vite + SCSS + native DOM game for RS School. Level 1 (US 1.1–1.6) is implemented; Level 2 and Level 3 are not.
 
-## Game Goal
+## Play
 
-Combine magical ingredients to create potions that match the required Temperature, Density, and Magic Power ranges.
+Start Game or Menu > New Game starts a fresh Medium run:
 
-Earn points for successful potions while managing limited ingredients, time, and lives.
+- Six ingredients, each with independent random stock of 2–15. Click a card or focus it and press Enter/Space to spend one stock and add a portion. Exhausted slots stay empty and disabled.
+- The cauldron holds at most four ingredients and preserves addition order. Active cards show icon, name, Temperature, Density, Magic Power and stock directly.
+- Three bars show summed values, including negatives, with recipe target zones. Brew requires a nonempty mixture. All three sums must be inside their target ranges expanded by ±8.
+- Success earns 200 points and 10 seconds, capped at 150, clears the mixture and picks another Medium recipe. Failure loses one life and clears the mixture. Neither restores stock.
+- A run starts at 02:30 with three lives. It ends when time or lives reach zero, or when both shelf and cauldron are empty. An empty shelf still permits brewing the final mixture.
+- Pause freezes time and conceals the field. Resume preserves recipe, stock and mixture; Exit to Menu discards the run. Hidden tabs pause automatically and require explicit Resume. Help also pauses a run.
+- Game Over shows the reason and score. Qualifying results prompt for a 2–15 character name: letters, digits, spaces, underscore or hyphen.
+- One Level 1 Top-10 persists locally, sorted by score descending and then earlier result date. Open it from Menu or Game Over. Clear Leaderboard uses an in-app confirmation. Storage errors produce a safe empty view or retry message.
 
-## Project Stages
+Before starting, six circular frames and the cauldron are empty, Time and Score are 0, and no lives appear. Help opens the rules. Difficulty selection and saved-run continuation are unavailable until Level 2. There are no Level 1 chemical reactions.
 
-- Precondition 1: Project setup and development tooling
-- Level 1: Basic playable game
-- Level 2: Difficulty selection and save/continue
-- Level 3: Advanced gameplay and visual feedback
+## Run locally
 
-## Technology Stack
-
-- TypeScript
-- Vite
-- SCSS
-- Native DOM
-- pnpm
-
-## Getting Started
-
-Install dependencies:
+Use Node.js 24 and pnpm 12.15.0, pinned in package.json.
 
 ```bash
 pnpm install
-```
-
-Start the development server:
-
-```bash
 pnpm dev
 ```
 
-Create a production build:
+Build with `pnpm build` and preview with `pnpm preview`. Relative production URLs support GitHub project Pages and local preview. The Deploy Level 1 workflow publishes story-2.
+
+## Verify
 
 ```bash
 pnpm build
+pnpm lint
+pnpm exec prettier --check .
+pnpm exec stylelint "src/**/*.{css,scss}"
+pnpm exec playwright install chromium
+pnpm test
 ```
 
-## Status
+`pnpm test:unit` runs pure logic and storage tests with Node's test runner. `pnpm test:browser` runs Playwright interactions. On Windows, PLAYWRIGHT_CHROMIUM_EXECUTABLE may point to an installed Chromium browser. CI installs Chromium. Screenshots/reports stay in ignored test-results/ and playwright-report/.
 
-Project setup in progress.
+Review at 375 × 812, 768 × 1024, 1024 × 768, 1440 × 768, 1720 × 800 and 1920 × 1080. Desktop places three slots per side and Help / primary action / Menu across the bottom. Tablet uses three inventory columns; mobile is cauldron-first with two inventory columns and normal vertical scrolling. No horizontal page scrolling is intended from 375px to 1920px.
+
+## Structure and assets
+
+- src/data/: exact ordered eight-ingredient catalogue, twenty recipes and settings. Level 1 uses the first six ingredients and seven Medium recipes. Moon Mist is Easy.
+- src/logic/: stock, sums, ranges, brewing, timestamp clock and end conditions.
+- src/state/: immutable transitions, pause and application orchestration. main.ts initializes bindings and cleanup.
+- src/ui/: native markup, rendering, accessible dialogs, meters and result entry.
+- src/storage/: guarded JSON storage and one list under `alchemists-cauldron:leaderboard:level-1`. Earlier saved-run helpers remain preparatory Level 2 interfaces, not an implemented Continue feature.
+- src/styles/: SCSS modules and shared tokens, keyboard focus and reduced-motion support.
+- public/assets/: separate local fonts, ornaments, SVG symbols, counter/control artwork and transparent bronze cauldron PNG.
+
+No flattened UI image is used. The full-width laboratory uses CSS architecture, gradients, individual candles and lighting. Cauldron, slots, counters and buttons remain independent. Approved empty circular frames are preserved before play; active cards expand for readable statistics. No runtime UI framework or router is used. Playwright is development-only.
+
+## Official references
+
+[Game README and catalogues](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/README.md) · [Common requirements](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/common-requirements.md)
+
+Task specifications: [US 1.1](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.1.md), [US 1.2](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.2.md), [US 1.3](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.3.md), [US 1.4](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.4.md), [US 1.5](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.5.md), [US 1.6](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.6.md).
+
+[Figma individual-artwork reference](https://www.figma.com/design/1Na01N57qT50ngfEQArtwo/Alchemist-s-Cauldron?node-id=7-3948)
+
+The upstream task checkout stays outside this repository in sibling rsschool-qualifying-stage. Task PRs merge into story-2. The final story-2 → story-1 PR and existing story-1 → main PR remain open for review.
