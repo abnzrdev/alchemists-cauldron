@@ -1,14 +1,14 @@
 # Alchemist's Cauldron
 
-A TypeScript + Vite + SCSS + native DOM game for RS School. Levels 1 and 2 are implemented. Level 3 currently adds native drag-and-drop, Hard ingredient tooltips and chemical reactions; remaining Level 3 tasks are in progress.
+A TypeScript + Vite + SCSS + native DOM game for RS School. Levels 1, 2 and all six Level 3 stories are implemented. The approved modular dark fantasy interface is preserved.
 
 ## Play
 
 Start Game or Menu > New Game starts a fresh run at the difficulty selected in Menu (Medium by default):
 
-- Four, six or eight ingredients by difficulty, each with independent random stock of 2–15. Click a card or focus it and press Enter/Space to spend one stock and add a portion. Exhausted slots stay empty and disabled.
-- The cauldron holds four ingredients on Easy/Medium or five on Hard and preserves addition order. Active cards show icon, name, Temperature, Density, Magic Power and stock directly.
-- Three bars show summed values, including negatives, with recipe target zones. Brew requires a nonempty mixture. All three sums must be inside their target ranges expanded by the selected tolerance (±8 on Medium).
+- Four, six or eight ingredients by difficulty, each with independent random stock of 2 to 15. Click, drag into the cauldron, or focus a card and press Enter/Space to spend one stock. Exhausted slots stay empty and disabled.
+- The cauldron holds four ingredients on Easy/Medium or five on Hard and preserves addition order. Cards retain icon, name and stock. Easy/Medium show the three statistics directly; Hard shows them in an accessible hover/focus tooltip.
+- Three bars show reaction-adjusted values, including negatives, with recipe target zones. Brew requires a nonempty mixture and checks all three values against the selected tolerance (8 on Medium).
 - Success earns the selected reward and time bonus, capped at that difficulty's start time (Medium: 200 points, +10 seconds, cap 150). It clears the mixture and picks another recipe from the selected difficulty. Failure loses one life and clears the mixture. Neither restores stock.
 - Starting time and lives follow the difficulty table below (Medium: 02:30 and three lives). It ends when time or lives reach zero, or when both shelf and cauldron are empty. An empty shelf still permits brewing the final mixture.
 - Pause freezes time and conceals the field. Resume preserves recipe, stock and mixture; Exit to Menu discards the run. Hidden tabs pause automatically and require explicit Resume. Help also pauses a run.
@@ -26,7 +26,7 @@ pnpm install
 pnpm dev
 ```
 
-Build with `pnpm build` and preview with `pnpm preview`. Relative production URLs support GitHub project Pages and local preview. The Deploy Game workflow publishes story-3 to the [shared public game](https://abnzrdev.github.io/alchemists-cauldron/).
+Build with `pnpm build` and preview with `pnpm preview`. Relative production URLs support GitHub project Pages and local preview. The Deploy Game workflow supports story-3 and story-4; the shared public game is https://abnzrdev.github.io/alchemists-cauldron/.
 
 ## Verify
 
@@ -97,3 +97,14 @@ The owner authorized choosing fixed subsets because the official documents speci
 All 15 official reactions live in a typed, tested catalogue. Enabled triggers read unmodified ingredient totals; simultaneous value effects apply in catalogue order to freshly calculated values. Values are never accumulated into ingredient data. Time/life penalties and clearing occur only on inactive-to-active transitions. The previous ordered mixture determines activation, so continuing a save does not replay penalties; clearing the mixture permits later reactivation. Bars and Brew use the same adjusted values. Help describes the enabled effects.
 
 Click or drag a stocked ingredient into the cauldron. Easy/Medium retain directly visible statistics; Hard shows base statistics on hover or focus while retaining the stock badge. Before play, the six circular slots remain empty.
+
+## Full game controls and review
+
+- Pour Out clears a nonempty mixture for exactly 10 seconds, without losing a life or refunding stock. It is disabled while empty or paused.
+- During active play, keys 1 through 8 select ingredients in shelf order, B brews, X pours out and P pauses. Resume with the native Resume button or Escape. Start, paused, Game Over and typing contexts do not process gameplay shortcuts.
+- Correct/incorrect brews show short CSS effects, failures shake the padded interface, and ingredient icons float gently. Reduced motion disables shaking/floating and shortens the brew effect. Existing smooth bars and target glow remain.
+- Task PRs merge into story-4. The final story-4 to story-3 PR stays open for Cross-Check, alongside PRs #8, #17 and #21. Screenshots are attached manually by the owner; RS App submission is not automated.
+
+[US 3.1](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.1.md) | [US 3.2](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.2.md) | [US 3.3](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.3.md) | [US 3.4](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.4.md) | [US 3.5](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.5.md) | [US 3.6](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.6.md)
+
+Level 3 adds 115 story points (20 + 15 + 35 + 10 + 20 + 15). The official overview states a maximum of 393; its common-requirements subtotal arithmetic is inconsistent (the Level 1 row lists 170 + 30 + 58 while displaying 228). We retain the official maximum and assess only the additional Level 3 stories here.
