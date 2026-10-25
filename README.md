@@ -1,127 +1,66 @@
 # Alchemist's Cauldron
 
-A browser-based potion brewing game developed for the RS School Qualifying Stage.
+A TypeScript + Vite + SCSS + native DOM game for RS School. Level 1 (US 1.1–1.6) is implemented; Level 2 and Level 3 are not.
 
-## Game Goal
+## Play
 
-Combine magical ingredients to create potions that match the required Temperature, Density, and Magic Power ranges.
+Start Game or Menu > New Game starts a fresh Medium run:
 
-Earn points for successful potions while managing limited ingredients, time, and lives.
+- Six ingredients, each with independent random stock of 2–15. Click a card or focus it and press Enter/Space to spend one stock and add a portion. Exhausted slots stay empty and disabled.
+- The cauldron holds at most four ingredients and preserves addition order. Active cards show icon, name, Temperature, Density, Magic Power and stock directly.
+- Three bars show summed values, including negatives, with recipe target zones. Brew requires a nonempty mixture. All three sums must be inside their target ranges expanded by ±8.
+- Success earns 200 points and 10 seconds, capped at 150, clears the mixture and picks another Medium recipe. Failure loses one life and clears the mixture. Neither restores stock.
+- A run starts at 02:30 with three lives. It ends when time or lives reach zero, or when both shelf and cauldron are empty. An empty shelf still permits brewing the final mixture.
+- Pause freezes time and conceals the field. Resume preserves recipe, stock and mixture; Exit to Menu discards the run. Hidden tabs pause automatically and require explicit Resume. Help also pauses a run.
+- Game Over shows the reason and score. Qualifying results prompt for a 2–15 character name: letters, digits, spaces, underscore or hyphen.
+- One Level 1 Top-10 persists locally, sorted by score descending and then earlier result date. Open it from Menu or Game Over. Clear Leaderboard uses an in-app confirmation. Storage errors produce a safe empty view or retry message.
 
-## Project Stages
+Before starting, six circular frames and the cauldron are empty, Time and Score are 0, and no lives appear. Help opens the rules. Difficulty selection and saved-run continuation are unavailable until Level 2. There are no Level 1 chemical reactions.
 
-- Precondition 1: Project setup and development tooling
-- Level 1: Basic playable game
-- Level 2: Difficulty selection and save/continue
-- Level 3: Advanced gameplay and visual feedback
+## Run locally
 
-## Technology Stack
-
-- TypeScript
-- Vite
-- SCSS
-- Native DOM
-- pnpm
-
-## Getting Started
-
-Install dependencies:
+Use Node.js 24 and pnpm 12.15.0, pinned in package.json.
 
 ```bash
 pnpm install
-```
-
-Start the development server:
-
-```bash
 pnpm dev
 ```
 
-Create a production build:
+Build with `pnpm build` and preview with `pnpm preview`. Relative production URLs support GitHub project Pages and local preview. The Deploy Level 1 workflow publishes story-2.
 
-```bash
-pnpm build
-```
-
-## Status
-
-The Start Screen is implemented with TypeScript, native DOM, and SCSS. Figma
-provides individual artwork, fonts, and colors; the final responsive layout is
-custom rather than a copy of the original frame.
-
-- Desktop (1024px and wider): compact header, three empty circular inventory slots on
-  either side of a centered bronze cauldron, and Help / Start Game / Menu below.
-- Tablet (768px to 1023px): centered cauldron, primary action, three-column
-  inventory in two rows, then Help and Menu.
-- Mobile (375px to 767px): title and zero-valued counters, cauldron,
-  Start Game, a two-column inventory, then Help and Menu. The page scrolls normally.
-
-The laboratory covers the full browser width. CSS stonework, an arch, columns,
-separate candle sconces, and restrained emerald illumination form the environment.
-The desktop UI adapts to viewport height and stays compact on taller screens;
-its background continues to fill the viewport. All controls fit at 1024 x 768,
-1440 x 768, 1720 x 800, and 1920 x 1080 without vertical scrolling.
-
-Each of the six circular inventory slots is an independent recessed HTML/CSS frame. There
-are no visible ingredient names, icons, stock values, or statistics before play.
-Hidden content reserves fields for a future expanded detail area containing an
-icon, name, Temperature, Density, Magic Power, and stock badge. Expansion behavior
-is deliberately deferred to gameplay implementation. No ingredient or brewing logic is implemented.
-
-Asset audit: no composite interface image is used. The transparent cauldron PNG,
-frame SVGs, counter icons, circular control ornaments, and candle
-SVGs are separate local assets in `public/assets`. The original cauldron scales
-without cropping or distortion, with separate empty layers for future contents
-and magical effects. The wooden workbench has been removed; a CSS contact shadow
-and restrained emerald/bronze light ground the cauldron instead. Ingredient slots
-use shared circular-frame styling with thin bronze rings and diamond ornaments,
-not six separate images. Desktop diameters range from 120px to 144px. Obsolete
-rectangular-frame styles, placeholder assets, and workbench artwork are removed.
-
-Help and Menu open accessible native dialogs. Escape dismisses a dialog and focus
-returns to its trigger, including after navigation between panels. Help explains
-ingredient stock, recipe ranges, brewing, lives, and the end-of-run conditions.
-
-Level 1 uses Medium settings exclusively. Easy/Hard and saved-run continuation are reserved for Level 2 and unavailable in the menu. The start screen stays empty until Start Game or Menu?s New Game emits the existing game:start event.
-
-### Ingredient shelf and cauldron (US 1.1)
-
-The first six entries of the full eight-ingredient catalogue become readable native button cards during a run. Each shows its icon, name, signed Temperature, Density, Magic Power, and independently generated stock (2?15). Adding spends one unit and preserves exact addition order, including repeated ingredients. Exhausted slots remain empty and disabled. Four ingredients block further selections; clearing a mixture preserves spent stock. Brewing, parameter bars, the timer, pause, and score submission are subsequent Level 1 tasks.
-
-Pure state transitions live in src/state/game-state.ts, stock generation in src/logic/stock.ts, and DOM presentation in src/ui/shelf.ts. Local SVG symbols supply independent ingredient icons. The approved empty circular frames are restored when returning to the start screen.
-
-Automated verification: pnpm test:unit and pnpm test:browser (Playwright). Install the browser once with pnpm exec playwright install chromium. On Windows, PLAYWRIGHT_CHROMIUM_EXECUTABLE can point to an installed Chromium browser. Responsive browser tests cover 375?1920px and save review screenshots in ignored test-results/.
-
-Run all quality checks:
+## Verify
 
 ```bash
 pnpm build
 pnpm lint
 pnpm exec prettier --check .
 pnpm exec stylelint "src/**/*.{css,scss}"
+pnpm exec playwright install chromium
+pnpm test
 ```
 
-To review, run `pnpm dev` and use browser responsive mode at 375 x 812,
-768 x 1024, 1024 x 768, 1440 x 768, 1720 x 800, and 1920 x 1080.
-Verify empty circular slots, local artwork, keyboard focus, Help/Menu dialogs, and the
-absence of a horizontal page scrollbar.
+`pnpm test:unit` runs pure logic and storage tests with Node's test runner. `pnpm test:browser` runs Playwright interactions. On Windows, PLAYWRIGHT_CHROMIUM_EXECUTABLE may point to an installed Chromium browser. CI installs Chromium. Screenshots/reports stay in ignored test-results/ and playwright-report/.
 
-### Cauldron bars (US 1.2)
+Review at 375 × 812, 768 × 1024, 1024 × 768, 1440 × 768, 1720 × 800 and 1920 × 1080. Desktop places three slots per side and Help / primary action / Menu across the bottom. Tablet uses three inventory columns; mobile is cauldron-first with two inventory columns and normal vertical scrolling. No horizontal page scrolling is intended from 375px to 1920px.
 
-Three accessible meters show exact ingredient sums, including negative values. Symmetric scales center zero, mark the current value, and display the current Medium recipe target zone. Markers transition smoothly without replacing their DOM nodes, with reduced-motion support. Green glow indicates the unexpanded recipe range. The complete official 20-recipe table is stored locally; Level 1 selects only its seven Medium rows. Brew integration follows in US 1.3.
+## Structure and assets
 
-### Recipe and brewing (US 1.3)
+- src/data/: exact ordered eight-ingredient catalogue, twenty recipes and settings. Level 1 uses the first six ingredients and seven Medium recipes. Moon Mist is Easy.
+- src/logic/: stock, sums, ranges, brewing, timestamp clock and end conditions.
+- src/state/: immutable transitions, pause and application orchestration. main.ts initializes bindings and cleanup.
+- src/ui/: native markup, rendering, accessible dialogs, meters and result entry.
+- src/storage/: guarded JSON storage and one list under `alchemists-cauldron:leaderboard:level-1`. Earlier saved-run helpers remain preparatory Level 2 interfaces, not an implemented Continue feature.
+- src/styles/: SCSS modules and shared tokens, keyboard focus and reduced-motion support.
+- public/assets/: separate local fonts, ornaments, SVG symbols, counter/control artwork and transparent bronze cauldron PNG.
 
-The current recipe panel shows its fantasy name, three target ranges, and live ingredient counter. Select one to four ingredients and press Brew. All three sums must fall inside the target ranges expanded by the fixed Medium tolerance of 8. Success awards 200 points, adds 10 seconds capped at 150, clears the mix and selects another random Medium recipe. Failure spends one life and clears the mix. Neither outcome restores stock. Brew is unavailable before a run and while the mixture is empty. The countdown and final Game Over panel follow in US 1.4.
+No flattened UI image is used. The full-width laboratory uses CSS architecture, gradients, individual candles and lighting. Cauldron, slots, counters and buttons remain independent. Approved empty circular frames are preserved before play; active cards expand for readable statistics. No runtime UI framework or router is used. Playwright is development-only.
 
-### Timer and Game Over (US 1.4)
+## Official references
 
-A run begins with 02:30 and three lives. The shrinking bar and MM:SS label use timestamp differences, including delayed callbacks; below 15 seconds the timer pulses red (reduced-motion respected). Runs end for Time is up, No lives left, or Out of ingredients. An empty shelf does not end a run while a mixture can still be brewed. The Game Over dialog shows the reason and score; Play again creates fresh stock, recipe, time and lives. Return to Menu restores the empty Start Screen.
+[Game README and catalogues](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/README.md) · [Common requirements](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/common-requirements.md)
 
-### Pause (US 1.5)
+Task specifications: [US 1.1](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.1.md), [US 1.2](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.2.md), [US 1.3](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.3.md), [US 1.4](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.4.md), [US 1.5](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.5.md), [US 1.6](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_1.6.md).
 
-Pause freezes the exact remaining time and blocks ingredient selection and brewing. The field is blurred and inert while the Resume / Exit to Menu dialog is open. Resume continues the same recipe, stock and mixture; Exit to Menu discards the run. Switching to a hidden browser tab pauses automatically and returning requires explicit Resume. Help remains available and pauses the run while the rules are read. Escape in the pause dialog resumes.
+[Figma individual-artwork reference](https://www.figma.com/design/1Na01N57qT50ngfEQArtwo/Alchemist-s-Cauldron?node-id=7-3948)
 
-### Level 1 leaderboard (US 1.6)
-
-Game Over asks for a name when the score qualifies for the single Level 1 Top-10. Names allow 2-15 letters, digits, spaces, underscores and hyphens. Submit once, or continue without saving. Results persist under alchemists-cauldron:leaderboard:level-1, sorted by descending score and then earlier result date. The table shows rank, name, score and DD.MM.YYYY HH:MM. Open it from Menu or Game Over. Clear Leaderboard asks for confirmation in a native in-app dialog. Broken storage is ignored; unavailable writes show an honest retry message. Difficulty-specific leaderboards and saved-run continuation remain Level 2 work.
+The upstream task checkout stays outside this repository in sibling rsschool-qualifying-stage. Task PRs merge into story-2. The final story-2 → story-1 PR and existing story-1 → main PR remain open for review.
