@@ -3,6 +3,7 @@
 @use 'panels';
 @use 'game';
 @use 'feedback';
+@use 'liquid';
 
 @font-face {
   font-family: tokens.$font-face-display;
@@ -221,14 +222,18 @@ body {
   transform-origin: top left;
 }
 
-.cauldron {
-  z-index: 2;
+.cauldron,
+.cauldron-front-rim {
   position: absolute;
   top: 0;
   left: 16.86px;
   width: tokens.$cauldron-width;
   height: tokens.$cauldron-height;
   object-fit: cover;
+}
+
+.cauldron {
+  z-index: 2;
 }
 
 .ingredient-slots,
@@ -596,7 +601,7 @@ button:focus-visible {
 
 .cauldron-effects {
   position: absolute;
-  z-index: 4;
+  z-index: 5;
   inset: 0;
   pointer-events: none;
 }

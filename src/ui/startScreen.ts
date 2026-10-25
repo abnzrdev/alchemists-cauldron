@@ -2,6 +2,7 @@ import { renderPanels } from './panels';
 export { bindStartScreen } from './menu';
 import { renderEnvironment } from './environment';
 import { asset } from './assets';
+import { renderCauldronLiquid } from './cauldron-liquid';
 
 function counter(label: string, icon: string): string {
   return `
@@ -74,9 +75,11 @@ export function renderStartScreen(): string {
     </header>
     <section class="cauldron-hero" aria-label="Alchemist’s cauldron">
       <div class="hero-art" data-scale-width="600"><div class="hero-composition">
+        ${renderCauldronLiquid()}
         <div class="cauldron-content" aria-hidden="true"></div>
         <div class="cauldron-effects" aria-hidden="true"></div>
         <img class="cauldron" src="${asset('Cauldron', 'png')}" alt="Empty engraved bronze cauldron" />
+        <img class="cauldron-front-rim" src="${asset('Cauldron', 'png')}" alt="" aria-hidden="true" draggable="false" />
       </div></div>
     </section>
     <div class="primary-action"><div class="start-slot" data-scale-width="528">

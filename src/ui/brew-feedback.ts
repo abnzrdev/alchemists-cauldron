@@ -3,11 +3,11 @@ import { reactionVisual } from './reaction-visuals';
 import type { GameState } from '../state/game-state';
 
 const SPRITES = {
-  success: 'vfx-brew-success-emerald-gold',
-  failure: 'vfx-reaction-eruption-overlay',
-  eruption: 'vfx-reaction-eruption-overlay',
-  steam: 'vfx-reaction-steam-burst-blue',
-  arcane: 'vfx-reaction-arcane-vortex-purple',
+  success: 'effects/brew-success-splash',
+  failure: 'final-polish/vfx-reaction-eruption-overlay',
+  eruption: 'final-polish/vfx-reaction-eruption-overlay',
+  steam: 'final-polish/vfx-reaction-steam-burst-blue',
+  arcane: 'final-polish/vfx-reaction-arcane-vortex-purple',
 } as const;
 
 export function bindBrewFeedback(root: HTMLElement) {
@@ -23,12 +23,15 @@ export function bindBrewFeedback(root: HTMLElement) {
     const burst = document.createElement('span');
     burst.className = `brew-burst brew-burst-${kind}`;
     const sprite = (name: string, className: string) =>
-      `<img class="${className}" src="${asset(`final-polish/${name}`, 'webp')}" alt="" draggable="false" />`;
+      `<img class="${className}" src="${asset(name, 'webp')}" alt="" draggable="false" />`;
     burst.innerHTML = `<span class="brew-inner-glow"></span>${sprite(SPRITES[kind], 'brew-vfx-layer')}`;
     if (kind === 'success') {
       burst.insertAdjacentHTML(
         'beforeend',
-        sprite('vfx-summoning-circle-emerald-gold', 'brew-summoning-circle'),
+        sprite(
+          'final-polish/vfx-summoning-circle-emerald-gold',
+          'brew-summoning-circle',
+        ),
       );
       for (let index = 0; index < 6; index++) {
         const mote = document.createElement('i');

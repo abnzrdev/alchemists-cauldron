@@ -27,6 +27,9 @@
 
 .brew-burst-success .brew-vfx-layer {
   animation-delay: 120ms;
+  width: tokens.$success-splash-width;
+  height: tokens.$success-splash-height;
+  top: tokens.$success-splash-top;
 }
 
 .brew-burst-arcane .brew-vfx-layer {
@@ -249,6 +252,10 @@
 
   .brew-vfx-layer {
     top: tokens.$fx-mobile-sprite-top;
+  }
+
+  .brew-burst-success .brew-vfx-layer {
+    top: tokens.$success-splash-mobile-top;
   }
 
   .brew-summoning-circle {

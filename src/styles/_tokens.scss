@@ -217,6 +217,30 @@ $brew-failure-glow: radial-gradient(
   transparent 65%
 );
 $fx-window-top: -72px;
+$ingredient-art-size: 48px;
+$liquid-left: 113px;
+$liquid-top: 23px;
+$liquid-width: 374px;
+$liquid-height: 46px;
+$liquid-texture-height: 180%;
+$liquid-texture-top: -40%;
+$liquid-base: #123e27;
+$liquid-ripple-color: rgb(231 212 126 / 45%);
+$cauldron-front-mask: polygon(
+  0 12%,
+  15% 12%,
+  25% 16%,
+  50% 19%,
+  75% 16%,
+  85% 12%,
+  100% 12%,
+  100% 100%,
+  0 100%
+);
+$success-splash-width: 420px;
+$success-splash-height: 315px;
+$success-splash-top: -164px;
+$success-splash-mobile-top: -236px;
 $fx-mobile-window-height: 150px;
 $fx-mobile-sprite-top: -280px;
 $fx-mobile-circle-top: -310px;
