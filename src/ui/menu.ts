@@ -43,7 +43,9 @@ export function bindStartScreen(root: HTMLElement): () => void {
     const saved = loadGame();
     get<HTMLButtonElement>('[data-action="continue"]').hidden =
       !saved || running();
-    get('#resume-summary').textContent = saved
+    const summary = get('#resume-summary');
+    summary.hidden = !saved;
+    summary.textContent = saved
       ? 'Saved ' +
         DIFFICULTY_SETTINGS[saved.difficulty].label +
         ' run | ' +
@@ -51,7 +53,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
         ' points | ' +
         formatTime(saved.timeLeft) +
         ' remaining'
-      : 'No unfinished game saved.';
+      : '';
   }
   function refreshLeaderboard(): void {
     const entries = loadLeaderboard(filter);

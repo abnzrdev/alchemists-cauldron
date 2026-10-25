@@ -1,3 +1,15 @@
+import { asset } from './assets';
+import { reactionVisual } from './reaction-visuals';
+import type { GameState } from '../state/game-state';
+
+const SPRITES = {
+  success: 'vfx-brew-success-emerald-gold',
+  failure: 'vfx-reaction-eruption-overlay',
+  eruption: 'vfx-reaction-eruption-overlay',
+  steam: 'vfx-reaction-steam-burst-blue',
+  arcane: 'vfx-reaction-arcane-vortex-purple',
+} as const;
+
 export function bindBrewFeedback(root: HTMLElement) {
   const screen = root.querySelector<HTMLElement>('.start-screen')!;
   const effects = root.querySelector<HTMLElement>('.cauldron-effects')!;
@@ -5,6 +17,28 @@ export function bindBrewFeedback(root: HTMLElement) {
   const reset = () => {
     effects.replaceChildren();
     screen.classList.remove('brew-failed');
+  };
+  const show = (kind: keyof typeof SPRITES) => {
+    reset();
+    const burst = document.createElement('span');
+    burst.className = `brew-burst brew-burst-${kind}`;
+    const sprite = (name: string, className: string) =>
+      `<img class="${className}" src="${asset(`final-polish/${name}`, 'webp')}" alt="" draggable="false" />`;
+    burst.innerHTML = `<span class="brew-inner-glow"></span>${sprite(SPRITES[kind], 'brew-vfx-layer')}`;
+    if (kind === 'success') {
+      burst.insertAdjacentHTML(
+        'beforeend',
+        sprite('vfx-summoning-circle-emerald-gold', 'brew-summoning-circle'),
+      );
+      for (let index = 0; index < 6; index++) {
+        const mote = document.createElement('i');
+        mote.className = 'brew-mote';
+        mote.style.setProperty('--mote-x', `${30 + index * 8}%`);
+        mote.style.setProperty('--mote-delay', `${180 + index * 60}ms`);
+        burst.append(mote);
+      }
+    }
+    effects.append(burst);
   };
   root.addEventListener(
     'animationend',
@@ -22,10 +56,7 @@ export function bindBrewFeedback(root: HTMLElement) {
   return {
     reset,
     play(result: 'success' | 'failure') {
-      reset();
-      const burst = document.createElement('span');
-      burst.className = `brew-burst brew-burst-${result}`;
-      effects.append(burst);
+      show(result);
       if (
         result === 'failure' &&
         !matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -34,6 +65,10 @@ export function bindBrewFeedback(root: HTMLElement) {
         void screen.offsetWidth;
         screen.classList.add('brew-failed');
       }
+    },
+    react(previous: GameState, selectedId: string) {
+      const visual = reactionVisual(previous, selectedId);
+      if (visual) show(visual);
     },
     dispose() {
       reset();

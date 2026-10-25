@@ -2,22 +2,86 @@
 
 .brew-burst {
   position: absolute;
-  top: 0;
-  left: 15%;
-  width: tokens.$brew-effect-width;
-  height: tokens.$brew-effect-height;
-  border-radius: tokens.$radius-round;
+  top: tokens.$fx-window-top;
+  left: 0;
+  width: tokens.$size-full;
+  height: tokens.$fx-window-height;
+  overflow: hidden;
+  mask-image: tokens.$fx-edge-mask;
   opacity: 0;
   pointer-events: none;
-  animation: brew-burst 650ms ease-out both;
+  animation: brew-burst 1300ms ease-out both;
 }
 
-.brew-burst-success {
+.brew-vfx-layer,
+.brew-summoning-circle {
+  position: absolute;
+  left: 50%;
+  width: tokens.$fx-sprite-size;
+  height: tokens.$fx-sprite-size;
+  top: tokens.$fx-sprite-top;
+  transform: translateX(-50%);
+  transform-origin: 50% 85%;
+  animation: alchemy-rise 1150ms ease-out both;
+}
+
+.brew-burst-success .brew-vfx-layer {
+  animation-delay: 120ms;
+}
+
+.brew-burst-arcane .brew-vfx-layer {
+  animation-name: alchemy-vortex;
+}
+
+.brew-summoning-circle {
+  width: tokens.$fx-circle-size;
+  height: tokens.$fx-circle-size;
+  top: tokens.$fx-circle-top;
+  animation: alchemy-circle 1300ms ease-out both;
+}
+
+.brew-inner-glow {
+  position: absolute;
+  left: 16%;
+  top: tokens.$fx-glow-top;
+  width: tokens.$fx-glow-width;
+  height: tokens.$fx-glow-height;
+  border-radius: tokens.$radius-round;
   background: tokens.$brew-success-glow;
 }
 
-.brew-burst-failure {
-  background: tokens.$brew-failure-glow;
+.brew-burst-failure,
+.brew-burst-eruption {
+  animation-duration: 900ms;
+
+  .brew-inner-glow {
+    background: tokens.$brew-failure-glow;
+  }
+
+  .brew-vfx-layer {
+    animation: alchemy-eruption 900ms ease-out both;
+  }
+}
+
+.brew-burst-steam .brew-inner-glow {
+  background: tokens.$fx-steam-glow;
+}
+
+.brew-burst-arcane .brew-inner-glow {
+  background: tokens.$fx-arcane-glow;
+}
+
+.brew-mote {
+  position: absolute;
+  left: var(--mote-x);
+  top: tokens.$fx-glow-top;
+  width: tokens.$size-6;
+  height: tokens.$size-6;
+  border: 1px solid var(--color-seal);
+  border-radius: tokens.$radius-round;
+  background: var(--color-gold);
+  opacity: 0;
+  animation: alchemy-mote 780ms ease-out var(--mote-delay) both;
 }
 
 .brew-failed > .game-header,
@@ -42,16 +106,93 @@
 @keyframes brew-burst {
   0% {
     opacity: 0;
-    transform: scale(0.5);
   }
 
-  25% {
-    opacity: 0.8;
+  18%,
+  55% {
+    opacity: 1;
   }
 
   100% {
     opacity: 0;
-    transform: translateY(-12px) scale(1.1);
+  }
+}
+
+@keyframes alchemy-rise {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(14px) scale(0.92);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-18px) scale(1.03);
+  }
+}
+
+@keyframes alchemy-vortex {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) rotate(-8deg) scale(0.9);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) rotate(8deg) scale(1.03);
+  }
+}
+
+@keyframes alchemy-circle {
+  0% {
+    transform: translateX(-50%) rotate(-3deg) scale(0.85);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateX(-50%) rotate(3deg) scale(1.06);
+    opacity: 0;
+  }
+}
+
+@keyframes alchemy-eruption {
+  0% {
+    transform: translateX(-50%) translateY(16px) scale(0.75);
+  }
+
+  35% {
+    transform: translateX(-50%) translateY(-6px) scale(1.06);
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(-20px) scale(1);
+  }
+}
+
+@keyframes alchemy-mote {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.5);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-90px) scale(0.2);
   }
 }
 
@@ -91,5 +232,31 @@
 
   .brew-burst {
     animation-duration: 1ms;
+  }
+
+  .brew-vfx-layer,
+  .brew-summoning-circle,
+  .brew-mote {
+    animation: none;
+  }
+}
+
+@media (width < 768px) {
+  .brew-burst {
+    top: 0;
+    height: tokens.$fx-mobile-window-height;
+  }
+
+  .brew-vfx-layer {
+    top: tokens.$fx-mobile-sprite-top;
+  }
+
+  .brew-summoning-circle {
+    top: tokens.$fx-mobile-circle-top;
+  }
+
+  .brew-inner-glow,
+  .brew-mote {
+    top: tokens.$fx-mobile-glow-top;
   }
 }

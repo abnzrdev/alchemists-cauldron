@@ -73,6 +73,7 @@ export function mountGame(root: HTMLElement): () => void {
     clock?.reset(state.timeLeft);
     persist();
     render();
+    feedback.react(previous, id);
     if (state.lives < previous.lives)
       get('#brew-feedback').textContent =
         'Volatile Mix! One life lost; the cauldron was emptied.';

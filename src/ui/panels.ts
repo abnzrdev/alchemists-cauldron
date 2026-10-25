@@ -14,7 +14,7 @@ export function renderPanels(): string {
       <p class="difficulty-details" id="difficulty-details"></p>
       <div class="menu-actions">
         <button type="button" data-action="continue" hidden>Continue Game</button>
-        <p class="resume-summary" id="resume-summary"></p>
+        <p class="resume-summary" id="resume-summary" hidden></p>
         <button class="menu-primary" type="button" data-action="new-game">New Game</button>
         <button type="button" data-dialog="leaderboard">Leaderboard</button>
         <button type="button" data-dialog="help">How to play</button>

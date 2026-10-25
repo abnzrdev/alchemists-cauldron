@@ -39,7 +39,6 @@ export function renderEmptySlots(start: number): string {
   return Array.from({ length: 3 }, (_, index) => {
     const slot = start + index;
     return `<article class="ingredient-slot" data-slot-index="${slot}" aria-label="Empty ingredient slot ${slot}">
-      <span class="slot-ornament" aria-hidden="true"></span>
       <!-- Reserved for an accessible expanded detail area during gameplay. -->
       <div class="ingredient-content" hidden>
         <span class="ingredient-icon" data-field="icon"></span>
