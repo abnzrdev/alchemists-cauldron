@@ -1,0 +1,95 @@
+@use 'tokens';
+
+.brew-burst {
+  position: absolute;
+  top: 0;
+  left: 15%;
+  width: tokens.$brew-effect-width;
+  height: tokens.$brew-effect-height;
+  border-radius: tokens.$radius-round;
+  opacity: 0;
+  pointer-events: none;
+  animation: brew-burst 650ms ease-out both;
+}
+
+.brew-burst-success {
+  background: tokens.$brew-success-glow;
+}
+
+.brew-burst-failure {
+  background: tokens.$brew-failure-glow;
+}
+
+.brew-failed > .game-header,
+.brew-failed > .cauldron-hero,
+.brew-failed .slot-group {
+  animation: brew-shake 280ms ease-out;
+}
+
+.cauldron-content .ingredient-glyph {
+  animation: ingredient-float 2600ms ease-in-out infinite alternate;
+}
+
+.cauldron-content .ingredient-glyph:nth-child(even) {
+  animation-delay: -1300ms;
+  animation-direction: alternate-reverse;
+}
+
+.is-paused .ingredient-glyph {
+  animation-play-state: paused;
+}
+
+@keyframes brew-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  25% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(1.1);
+  }
+}
+
+@keyframes brew-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25%,
+  75% {
+    transform: translateX(-2px);
+  }
+
+  50% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes ingredient-float {
+  from {
+    transform: translateY(2px) rotate(-3deg);
+  }
+
+  to {
+    transform: translateY(-3px) rotate(3deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cauldron-content .ingredient-glyph,
+  .brew-failed > .game-header,
+  .brew-failed > .cauldron-hero,
+  .brew-failed .slot-group {
+    animation: none;
+  }
+
+  .brew-burst {
+    animation-duration: 1ms;
+  }
+}

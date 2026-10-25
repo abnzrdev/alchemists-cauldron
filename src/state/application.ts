@@ -2,6 +2,7 @@ import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
 import { getReactions } from '../data/reactions.ts';
 import { evaluateReactions } from '../logic/reactions.ts';
 import { bindIngredientTooltip } from '../ui/ingredient-tooltip.ts';
+import { bindBrewFeedback } from '../ui/brew-feedback.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import {
@@ -46,6 +47,7 @@ export function mountGame(root: HTMLElement): () => void {
   const startContent = [...primary.childNodes];
   const screen = get('.start-screen');
   const menuButton = get<HTMLButtonElement>('.circular-control-menu');
+  const feedback = bindBrewFeedback(root);
   const tooltip = bindIngredientTooltip(
     root,
     () => state?.status === 'playing' && state.difficulty === 'hard',
@@ -211,6 +213,7 @@ export function mountGame(root: HTMLElement): () => void {
     difficulty: Difficulty = loadDifficulty(),
     saved?: SavedGame,
   ): void {
+    feedback.reset();
     concealField(false);
     clearInterval(timer);
     root
@@ -246,6 +249,7 @@ export function mountGame(root: HTMLElement): () => void {
   }
 
   function exit(): void {
+    feedback.reset();
     tooltip.reset();
     drag.reset();
     clearSave();
@@ -364,6 +368,7 @@ export function mountGame(root: HTMLElement): () => void {
             : state.lives
               ? 'The brew failed. One life lost. Try a new mixture.'
               : 'No lives remain. Return to the menu to start again.';
+        if (outcome.result !== 'ignored') feedback.play(outcome.result);
         if (finishIfNeeded()) return;
         root
           .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
@@ -409,6 +414,7 @@ export function mountGame(root: HTMLElement): () => void {
     results.dispose();
     drag.dispose();
     tooltip.dispose();
+    feedback.dispose();
     root.querySelector('#game-over-dialog')?.remove();
     root.querySelector('#pause-dialog')?.remove();
   };

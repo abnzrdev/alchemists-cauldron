@@ -2,6 +2,7 @@
 @use 'environment';
 @use 'panels';
 @use 'game';
+@use 'feedback';
 
 @font-face {
   font-family: tokens.$font-face-display;
