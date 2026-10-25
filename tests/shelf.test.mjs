@@ -43,7 +43,7 @@ test('new games independently generate inclusive stock 2 through 15', () => {
     Array(6).fill(15),
   );
   let n = 0;
-  const game = createGame(() => n++ / 6);
+  const game = createGame(() => (n++ % 6) / 6);
   assert.equal(new Set(Object.values(game.shelfStock)).size, 6);
 });
 test('spending is immutable, preserves duplicates and order, blocks exhausted/full/invalid selections', () => {

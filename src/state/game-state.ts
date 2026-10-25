@@ -1,9 +1,12 @@
-﻿import { INGREDIENTS } from '../data/ingredients.ts';
+﻿import { pickRecipe } from '../data/recipes.ts';
+import type { Recipe } from '../data/recipes.ts';
+import { INGREDIENTS } from '../data/ingredients.ts';
 import type { Ingredient } from '../data/ingredients.ts';
 import { LEVEL_ONE_SETTINGS } from '../data/levelOne.ts';
 import { createStock } from '../logic/stock.ts';
 
 export interface GameState {
+  activeRecipe: Recipe;
   status: 'playing' | 'paused' | 'game-over';
   difficulty: 'medium';
   score: number;
@@ -20,6 +23,7 @@ export const LEVEL_ONE_INGREDIENTS = INGREDIENTS.slice(
 
 export function createGame(random: () => number = Math.random): GameState {
   return {
+    activeRecipe: pickRecipe('medium', random),
     status: 'playing',
     difficulty: 'medium',
     score: 0,

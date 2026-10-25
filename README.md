@@ -105,3 +105,7 @@ To review, run `pnpm dev` and use browser responsive mode at 375 x 812,
 768 x 1024, 1024 x 768, 1440 x 768, 1720 x 800, and 1920 x 1080.
 Verify empty circular slots, local artwork, keyboard focus, Help/Menu dialogs, and the
 absence of a horizontal page scrollbar.
+
+### Cauldron bars (US 1.2)
+
+Three accessible meters show exact ingredient sums, including negative values. Symmetric scales center zero, mark the current value, and display the current Medium recipe target zone. Markers transition smoothly without replacing their DOM nodes, with reduced-motion support. Green glow indicates the unexpanded recipe range. The complete official 20-recipe table is stored locally; Level 1 selects only its seven Medium rows. Brew integration follows in US 1.3.
