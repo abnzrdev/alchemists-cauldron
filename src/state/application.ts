@@ -1,3 +1,5 @@
+import { pauseGame, resumeGame } from './pause.ts';
+import { renderPause } from '../ui/pause.ts';
 import { RunClock, formatTime, getEndReason } from '../logic/timer.ts';
 import { renderGameOver } from '../ui/game-over.ts';
 import { brew } from '../logic/brewing.ts';
@@ -16,7 +18,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
   const abort = new AbortController();
   let clock: RunClock | null = null;
   let timer: ReturnType<typeof setInterval> | undefined;
-  root.insertAdjacentHTML('beforeend', renderGameOver());
+  root.insertAdjacentHTML('beforeend', renderGameOver() + renderPause());
   const get = <T extends HTMLElement>(selector: string): T => {
     const element = root.querySelector<T>(selector);
     if (!element) throw new Error(`Missing game element: ${selector}`);
@@ -88,7 +90,46 @@ export function mountLevelOne(root: HTMLElement): () => void {
     finishIfNeeded();
   }
 
+  function concealField(concealed: boolean): void {
+    screen.classList.toggle('is-paused', concealed);
+    root
+      .querySelectorAll<HTMLElement>(
+        '.game-header, .cauldron-hero, .ingredient-slots, .primary-action',
+      )
+      .forEach((field) => {
+        field.inert = concealed;
+      });
+  }
+
+  function pause(showDialog = true): void {
+    if (state?.status !== 'playing') return;
+    tick();
+    if (state.status !== 'playing') return;
+    state = pauseGame(state, clock?.remaining() ?? state.timeLeft);
+    clearInterval(timer);
+    concealField(true);
+    render();
+    if (showDialog) {
+      root
+        .querySelectorAll<HTMLDialogElement>('dialog[open]')
+        .forEach((dialog) => dialog.close());
+      get<HTMLDialogElement>('#pause-dialog').showModal();
+    }
+  }
+
+  function resume(): void {
+    if (state?.status !== 'paused') return;
+    state = resumeGame(state);
+    clock?.reset(state.timeLeft);
+    get<HTMLDialogElement>('#pause-dialog').close();
+    concealField(false);
+    render();
+    timer = setInterval(tick, 100);
+    get<HTMLButtonElement>('[data-action="pause"]').focus();
+  }
+
   function start(): void {
+    concealField(false);
     clearInterval(timer);
     root
       .querySelectorAll<HTMLDialogElement>('dialog[open]')
@@ -105,7 +146,7 @@ export function mountLevelOne(root: HTMLElement): () => void {
     screen.classList.add('is-running');
     menuButton.disabled = true;
     primary.innerHTML =
-      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
     render();
     root
       .querySelector<HTMLButtonElement>('[data-ingredient]:not(:disabled)')
@@ -113,6 +154,8 @@ export function mountLevelOne(root: HTMLElement): () => void {
   }
 
   function exit(): void {
+    concealField(false);
+    get<HTMLDialogElement>('#pause-dialog').close();
     clearInterval(timer);
     clock = null;
     get<HTMLDialogElement>('#game-over-dialog').close();
@@ -142,6 +185,17 @@ export function mountLevelOne(root: HTMLElement): () => void {
           ? event.target.closest<HTMLButtonElement>('button')
           : null;
       if (!button || button.disabled) return;
+      if (button.dataset.action === 'pause') {
+        pause();
+        return;
+      }
+      if (button.dataset.action === 'resume') {
+        resume();
+        return;
+      }
+      if (button.dataset.dialog === 'help') {
+        pause(false);
+      }
       if (button.dataset.action === 'play-again') {
         start();
         return;
@@ -193,9 +247,33 @@ export function mountLevelOne(root: HTMLElement): () => void {
     (event) => event.preventDefault(),
     { signal: abort.signal },
   );
+  document.addEventListener(
+    'visibilitychange',
+    () => {
+      if (document.hidden) pause();
+    },
+    { signal: abort.signal },
+  );
+  get<HTMLDialogElement>('#pause-dialog').addEventListener(
+    'cancel',
+    (event) => {
+      event.preventDefault();
+      resume();
+    },
+    { signal: abort.signal },
+  );
+  get<HTMLDialogElement>('#help-dialog').addEventListener(
+    'close',
+    () => {
+      if (state?.status === 'paused' && !root.querySelector('dialog[open]'))
+        get<HTMLDialogElement>('#pause-dialog').showModal();
+    },
+    { signal: abort.signal },
+  );
   return () => {
     clearInterval(timer);
     abort.abort();
     root.querySelector('#game-over-dialog')?.remove();
+    root.querySelector('#pause-dialog')?.remove();
   };
 }
