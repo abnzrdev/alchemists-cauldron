@@ -1,4 +1,4 @@
-import { setMessage, clearMessage, ref, getLanguage } from '../i18n/index.ts';
+import { setMessage, clearMessage, ref } from '../i18n/index.ts';
 import { formatTime } from '../logic/timer.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import { loadDifficulty, saveDifficulty, loadGame } from '../storage/save.ts';
@@ -68,10 +68,6 @@ export function bindStartScreen(root: HTMLElement): () => void {
         const cell = document.createElement('td');
         cell.textContent = value;
         if (column === 3) setMessage(cell, `common.${filter}`);
-        if (column === 4) {
-          cell.dataset.resultDate = String(entry.date);
-          cell.textContent = formatResultDate(entry.date, getLanguage());
-        }
         row.append(cell);
       });
       body.append(row);
@@ -211,20 +207,6 @@ export function bindStartScreen(root: HTMLElement): () => void {
         filter = value;
         refreshLeaderboard();
       }
-    },
-    { signal },
-  );
-  document.addEventListener(
-    'languagechange',
-    () => {
-      root
-        .querySelectorAll<HTMLElement>('[data-result-date]')
-        .forEach((cell) => {
-          cell.textContent = formatResultDate(
-            Number(cell.dataset.resultDate),
-            getLanguage(),
-          );
-        });
     },
     { signal },
   );

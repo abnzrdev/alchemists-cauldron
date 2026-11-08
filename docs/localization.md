@@ -28,8 +28,8 @@ Unicode typography, safe preferences, and separation of presentation from game s
   locale. `bindLocalization` handles their delegated change event and disposal.
 - `setLanguage` changes the presentation preference, updates `<html lang>` and the
   browser title, resolves current text/attribute bindings, synchronizes selectors,
-  and emits `languagechange`. `src/ui/menu.ts` uses that event to reformat existing
-  date cells with `Intl.DateTimeFormat`; timestamps and player names stay intact.
+  and emits `languagechange`. Leaderboard dates retain the required fixed
+  `DD.MM.YYYY HH:MM` format in every language; timestamps and player names stay intact.
 - Subsequent render helpers use the current language immediately. The existing
   `game:exit` event refreshes the detached Start button when it is restored.
   No polling, translation fetches, DOM observer, framework, or runtime dependency
@@ -77,7 +77,7 @@ runtime dependency to this small native DOM application. Component rerendering w
 avoided because it could disturb open dialogs, focus, and player input. Translating
 canonical game data would couple presentation to persistence, so display names are
 looked up by IDs instead. Labels use neutral count forms where practical rather than
-a general pluralization engine. Date output follows the browser's locale data.
+a general pluralization engine. Dates use the original fixed local-time format.
 
 ## Verification and manual review
 
