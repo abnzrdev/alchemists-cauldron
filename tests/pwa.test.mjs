@@ -58,6 +58,8 @@ function workerHarness(
   stores.set('other-app:cache', new Map());
   stores.set('alchemists-cauldron:https://other.example/game/:old', new Map());
   const requests = [];
+  const storedRequests = new Map();
+  const unreadable = new Set();
   let claims = 0;
   let offline = true;
   const caches = {
@@ -75,13 +77,35 @@ function workerHarness(
         async addAll(items) {
           requests.push(...items);
           if (failInstall) throw new Error('missing or mismatched asset');
-          for (const request of items)
-            entries.set(request.url, new Response(`cached:${request.url}`));
+          for (const request of items) {
+            storedRequests.set(request.url, request);
+            entries.set(
+              request.url,
+              new Response(`cached:${request.url}`, {
+                headers: { Vary: 'Origin' },
+              }),
+            );
+          }
         },
-        async match(request) {
-          return entries
-            .get(typeof request === 'string' ? request : request.url)
-            ?.clone();
+        async match(request, options = {}) {
+          const query =
+            typeof request === 'string' ? new Request(request) : request;
+          const response = entries.get(query.url);
+          if (!response || unreadable.has(query.url)) return undefined;
+          if (!options.ignoreVary) {
+            const vary = response.headers.get('Vary');
+            if (
+              vary
+                ?.split(',')
+                .some(
+                  (name) =>
+                    new Headers(query.headers).get(name.trim()) !==
+                    storedRequests.get(query.url)?.headers.get(name.trim()),
+                )
+            )
+              return undefined;
+          }
+          return response.clone();
         },
         async keys() {
           return [...entries.keys()].map((url) => new Request(url));
@@ -138,10 +162,10 @@ function workerHarness(
     await pending;
     return reply;
   }
-  function fetchRequest(url, mode = 'navigate', method = 'GET') {
+  function fetchRequest(url, mode = 'navigate', method = 'GET', headers = {}) {
     let pending;
     handlers.fetch({
-      request: { url, mode, method },
+      request: { url, mode, method, headers: new Headers(headers) },
       respondWith(value) {
         pending = value;
       },
@@ -154,6 +178,8 @@ function workerHarness(
     fetchRequest,
     stores,
     requests,
+    caches,
+    unreadable,
     prefix,
     get claims() {
       return claims;
@@ -163,6 +189,61 @@ function workerHarness(
     },
   };
 }
+
+test('Vary: Origin bundle lookup succeeds offline despite different request headers; readiness checks actual retrieval', async () => {
+  const scope = 'http://127.0.0.1:4173/';
+  const worker = workerHarness(scope);
+  await worker.lifecycle('install');
+  const cache = await worker.caches.open(`${worker.prefix}current`);
+  for (const path of ['assets/app-abc.js', 'assets/game.css']) {
+    const url = new URL(path, scope).href;
+    const request = new Request(url, {
+      headers: { Origin: new URL(scope).origin },
+    });
+    assert.ok(
+      (await cache.keys()).some((key) => key.url === url),
+      'entry exists',
+    );
+    assert.equal(
+      await cache.match(request),
+      undefined,
+      'default Vary matching reproduces the original miss',
+    );
+    assert.equal(
+      await (
+        await worker.fetchRequest(url, 'cors', 'GET', {
+          Origin: new URL(scope).origin,
+        })
+      ).text(),
+      `cached:${url}`,
+    );
+    worker.unreadable.add(url);
+    assert.equal(
+      (await worker.status()).ready,
+      false,
+      'keys alone do not prove readiness',
+    );
+    worker.unreadable.delete(url);
+  }
+  const bundle = `${scope}assets/app-abc.js`;
+  worker.stores
+    .get(`${worker.prefix}current`)
+    .set(bundle, new Response('error', { status: 500 }));
+  assert.equal(
+    (await worker.status()).ready,
+    false,
+    'unsuccessful cached responses are not ready',
+  );
+  worker.stores
+    .get(`${worker.prefix}current`)
+    .set(bundle, new Response('bundle', { headers: { Vary: 'Origin' } }));
+  assert.equal((await worker.status()).ready, true);
+  assert.equal(
+    worker.fetchRequest(`${bundle}?different=version`, 'cors'),
+    undefined,
+    'exact URL matching still applies',
+  );
+});
 
 for (const scope of [
   'http://127.0.0.1:4173/',

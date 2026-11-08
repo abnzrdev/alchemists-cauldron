@@ -27,7 +27,8 @@ The production data flow is:
    `http://127.0.0.1:4173/` qualify. `pnpm dev` does not register a worker.
 5. The worker downloads the complete version into a named cache. The Menu displays
    a localized ready message only after the controlling worker confirms all required
-   cache entries exist. The query can repair evicted entries when online.
+   resources can actually be retrieved successfully from its cache. The query can
+   repair evicted entries when online.
 6. The worker serves that version's cached HTML and assets. The game continues using
    its existing native DOM, gameplay logic, and localStorage data.
 
@@ -63,7 +64,14 @@ never reads, migrates, clears, or writes localStorage.
   cached `index.html`. Listed assets are cache-first. Other routes, external requests,
   and non-GET requests are not intercepted. Cache/network failures yield normal
   network fallback or a network-error response; error responses are never cached.
+- **Cache matching:** known integrity-verified resources use their exact URL with
+  `ignoreVary: true` inside this version's cache. Preview responses have `Vary: Origin`;
+  bundle requests can include Origin while precaching requests omit it. Default
+  matching previously missed those cached bundles, causing an offline blank screen.
+  This exception does not ignore URL query strings or widen the scope/asset allowlist.
 - **Readiness/repair:** a `PWA_STATUS` message checks the complete cache inventory.
+  It uses the same retrieval helper as fetch and requires successful responses, not
+  merely listed cache keys.
   When the page requests online repair, missing entries are refilled atomically with
   the same integrity checks. Failed repair preserves existing entries and reports
   not-ready. Page-show/visibility changes recheck availability. No success is inferred
@@ -120,9 +128,12 @@ Terminal checks passed:
 - `pnpm build` (TypeScript, Vite, production worker generation).
 - `pnpm lint`, `pnpm exec prettier --check .`,
   `pnpm exec stylelint "src/**/*.{css,scss}"`, and `git diff --check`.
-- `pnpm test:unit`: 66 checks, including five isolated PWA checks. These exercise
+- `pnpm test:unit`: 67 checks, including six isolated PWA checks. These exercise
   deterministic inventory/versioning, scoped fetch behavior at root/project URLs,
   install failure, cleanup boundaries, readiness, eviction/repair, and storage failure.
+  The Vary regression reproduces a default bundle lookup miss with differing Origin
+  headers, verifies offline retrieval, and rejects unreadable/error cache entries as
+  not-ready. It fails against the original worker and passes with the correction.
   Worker event/Cache Storage mocks run in Node; they are not browser lifecycle tests.
 - `node scripts/verify-pwa.mjs`: 45 resource paths/content hashes, manifest values,
   real PNG dimensions, cached HTML/CSS references, and root/project URL resolution.
@@ -140,6 +151,12 @@ not a verified deployment of this branch. Pages still deploys only `story-3` and
 production preview until the owner authorizes deployment.
 
 ## Windows Chrome/Edge manual acceptance and screenshot guide
+
+When retesting the cache-matching fix, serve the rebuilt production output online
+first and let the new worker install. Close every game tab and installed window,
+then reopen online before testing Offline. Do not clear site data: normal waiting
+activation preserves saves. In Application, check the active worker's `BUILD.version`
+against the cache-name suffix to ensure the corrected version is controlling the app.
 
 1. Run `git switch feat/creative-pwa-offline`, `pnpm install --frozen-lockfile`,
    `pnpm build`, `node scripts/verify-pwa.mjs`, and

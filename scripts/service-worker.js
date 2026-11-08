@@ -5,6 +5,9 @@ const CACHE_NAME = `${CACHE_PREFIX}${BUILD.version}`;
 const URLS = BUILD.assets.map((asset) => new URL(asset.path, SCOPE).href);
 const PRECACHED = new Set(URLS);
 const ENTRY = new URL('./index.html', SCOPE).href;
+// Only used for the exact, integrity-verified URLs in this version's precache.
+// Bundle requests can send Origin while installation requests do not (Vary: Origin).
+const matchPrecached = (cache, url) => cache.match(url, { ignoreVary: true });
 const precache = (cache) =>
   cache.addAll(
     BUILD.assets.map(
@@ -70,7 +73,10 @@ self.addEventListener('fetch', (event) => {
     (async () => {
       try {
         const cache = await caches.open(CACHE_NAME);
-        const cached = await cache.match(navigation ? ENTRY : request);
+        const cached = await matchPrecached(
+          cache,
+          navigation ? ENTRY : url.href,
+        );
         // Keep a version's HTML with its own bundles, including after a deployment.
         if (cached) return cached;
       } catch {
@@ -94,9 +100,10 @@ self.addEventListener('message', (event) => {
       try {
         const cache = await caches.open(CACHE_NAME);
         const complete = async () => {
-          const entries = await cache.keys();
-          const stored = new Set(entries.map((request) => request.url));
-          return URLS.every((url) => stored.has(url));
+          const responses = await Promise.all(
+            URLS.map((url) => matchPrecached(cache, url)),
+          );
+          return responses.every((response) => response?.ok);
         };
         ready = await complete();
         if (!ready && event.data.repair === true) {
