@@ -1,0 +1,81 @@
+@use 'tokens';
+
+@font-face {
+  font-family: tokens.$font-ethiopic;
+  font-style: normal;
+  font-weight: tokens.$weight-variable;
+  font-display: swap;
+  src: url('/assets/NotoSansEthiopic.ttf') format('truetype');
+}
+
+html:lang(am) {
+  --font-localized-body: #{tokens.$font-ethiopic};
+  --font-localized-display: #{tokens.$font-ethiopic};
+}
+
+html:lang(kk),
+html:lang(ru) {
+  --font-localized-body: #{tokens.$font-cyrillic};
+  --font-localized-display: #{tokens.$font-cyrillic};
+}
+
+.language-setting {
+  display: grid;
+  gap: tokens.$space-8;
+  margin-bottom: tokens.$space-16;
+}
+
+.language-setting select {
+  min-width: 0;
+  max-width: tokens.$size-full;
+  min-height: tokens.$size-44;
+  padding: tokens.$space-8;
+  color: var(--color-parchment);
+  background: var(--color-charcoal);
+  border: 1px solid var(--color-bronze);
+  border-radius: tokens.$radius-2;
+  font-family: tokens.$font-ethiopic, tokens.$font-cyrillic;
+  font-size: tokens.$font-size-game;
+}
+
+.language-setting p:empty {
+  display: none;
+}
+
+.game-dialog,
+.ingredient-card,
+.ingredient-tooltip,
+.run-panel,
+.run-primary {
+  overflow-wrap: anywhere;
+}
+
+.game-dialog button,
+.run-button {
+  max-width: tokens.$size-full;
+  white-space: normal;
+}
+
+.ingredient-card-heading > span {
+  min-width: 0;
+}
+
+html:not(:lang(en)) .game-title h1 {
+  font-size: tokens.$size-40;
+  letter-spacing: normal;
+}
+
+html:not(:lang(en)) .counter-details span {
+  font-size: tokens.$size-28;
+}
+
+html:not(:lang(en)) .start-label {
+  top: tokens.$space-32;
+  font-size: tokens.$size-40;
+  line-height: 1.2;
+}
+
+html:lang(am) .ingredient-card-heading,
+html:lang(am) .ingredient-card-stats {
+  line-height: 1.5;
+}

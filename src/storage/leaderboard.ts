@@ -74,8 +74,13 @@ export function saveResult(
 export function clearLeaderboard(difficulty: Difficulty = 'medium'): boolean {
   return removeStoredValue(leaderboardKey(difficulty));
 }
-export function formatResultDate(timestamp: number): string {
+export function formatResultDate(timestamp: number, locale?: string): string {
   const date = new Date(timestamp);
+  if (locale)
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(date);
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }

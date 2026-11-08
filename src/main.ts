@@ -1,3 +1,4 @@
+import { bindLocalization } from './i18n/index.ts';
 import { mountGame } from './state/application';
 import './styles/main.scss';
 import {
@@ -16,11 +17,13 @@ app.innerHTML = renderStartScreen();
 const compositionObserver = observeCompositionSizing(app);
 const unbindStartScreen = bindStartScreen(app);
 const unbindGame = mountGame(app);
+const unbindLocalization = bindLocalization(app);
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     compositionObserver.disconnect();
     unbindStartScreen();
     unbindGame();
+    unbindLocalization();
   });
 }

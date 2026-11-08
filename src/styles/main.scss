@@ -4,6 +4,7 @@
 @use 'game';
 @use 'feedback';
 @use 'liquid';
+@use 'localization';
 
 @font-face {
   font-family: tokens.$font-face-display;
@@ -313,10 +314,7 @@ body {
   top: 24px;
   left: 30px;
   width: tokens.$start-label-width;
-  font:
-    400 62px / 1.1 'IM Fell English',
-    Georgia,
-    serif;
+  font: 400 62px / 1.1 tokens.$font-display;
 }
 
 .start-seal {
@@ -409,10 +407,7 @@ body {
 }
 
 .control-label {
-  font:
-    600 18px / normal 'Cormorant Garamond',
-    Georgia,
-    serif;
+  font: 600 18px / normal tokens.$font-body;
   letter-spacing: 2px;
 }
 
@@ -527,10 +522,7 @@ button:focus-visible {
   border-radius: tokens.$radius-12;
   background: var(--color-deep-green);
   color: var(--color-parchment);
-  font:
-    20px / 1.5 'Cormorant Garamond',
-    Georgia,
-    serif;
+  font: 20px / 1.5 tokens.$font-body;
 }
 
 .game-dialog::backdrop {
@@ -539,10 +531,7 @@ button:focus-visible {
 
 .game-dialog h2 {
   margin-top: 0;
-  font:
-    32px / 1.2 'IM Fell English',
-    Georgia,
-    serif;
+  font: 32px / 1.2 tokens.$font-display;
 }
 
 .game-dialog button {

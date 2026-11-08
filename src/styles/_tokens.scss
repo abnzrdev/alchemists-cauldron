@@ -25,9 +25,12 @@
 }
 
 // Composition dimensions, spacing, and surface treatments shared by the start screen.
-$font-display: 'IM Fell English', georgia, serif;
+$font-display: var(--font-localized-display, 'IM Fell English'), georgia, serif;
 $weight-regular: 400;
-$font-body: 'Cormorant Garamond', georgia, serif;
+$font-body: var(--font-localized-body, 'Cormorant Garamond'), georgia, serif;
+$weight-variable: 100 900;
+$font-ethiopic: 'Noto Sans Ethiopic';
+$font-cyrillic: georgia, 'Times New Roman', serif;
 $weight-semibold: 600;
 $size-full: 100%;
 $counter-width: 280px;

@@ -1,3 +1,4 @@
+import { setMessage, clearMessage, ref, getLanguage } from '../i18n/index.ts';
 import { formatTime } from '../logic/timer.ts';
 import { DIFFICULTY_SETTINGS, isDifficulty } from '../data/difficulty.ts';
 import { loadDifficulty, saveDifficulty, loadGame } from '../storage/save.ts';
@@ -36,24 +37,20 @@ export function bindStartScreen(root: HTMLElement): () => void {
           String(button.dataset.difficulty === difficulty),
         );
       });
-    get('#difficulty-summary').textContent =
-      `${rules.shelfSize} ingredients | Up to ${rules.cauldronLimit} per mix | ${rules.startTime} seconds | ${rules.lives} lives`;
-    get('#difficulty-details').textContent =
-      `Tolerance +/-${rules.tolerance} | ${rules.scorePerBrew} points per brew | +${rules.timeBonus}s bonus | ${rules.reactionCount} reactions`;
+    setMessage(get('#difficulty-summary'), 'menu.summary', rules);
+    setMessage(get('#difficulty-details'), 'menu.details', rules);
     const saved = loadGame();
     get<HTMLButtonElement>('[data-action="continue"]').hidden =
       !saved || running();
     const summary = get('#resume-summary');
     summary.hidden = !saved;
-    summary.textContent = saved
-      ? 'Saved ' +
-        DIFFICULTY_SETTINGS[saved.difficulty].label +
-        ' run | ' +
-        saved.score +
-        ' points | ' +
-        formatTime(saved.timeLeft) +
-        ' remaining'
-      : '';
+    if (saved)
+      setMessage(summary, 'menu.saved', {
+        difficulty: ref(`common.${saved.difficulty}`),
+        score: saved.score,
+        time: formatTime(saved.timeLeft),
+      });
+    else clearMessage(summary);
   }
   function refreshLeaderboard(): void {
     const entries = loadLeaderboard(filter);
@@ -65,17 +62,23 @@ export function bindStartScreen(root: HTMLElement): () => void {
         String(index + 1),
         entry.name,
         String(entry.score),
-        DIFFICULTY_SETTINGS[filter].label,
+        '',
         formatResultDate(entry.date),
-      ].forEach((value) => {
+      ].forEach((value, column) => {
         const cell = document.createElement('td');
         cell.textContent = value;
+        if (column === 3) setMessage(cell, `common.${filter}`);
+        if (column === 4) {
+          cell.dataset.resultDate = String(entry.date);
+          cell.textContent = formatResultDate(entry.date, getLanguage());
+        }
         row.append(cell);
       });
       body.append(row);
     });
-    get('#leaderboard-caption').textContent =
-      `${DIFFICULTY_SETTINGS[filter].label} | Top 10`;
+    setMessage(get('#leaderboard-caption'), 'leaderboard.caption', {
+      difficulty: ref(`common.${filter}`),
+    });
     get('#leaderboard-empty').hidden = entries.length > 0;
     get('.leaderboard-scroll').hidden = !entries.length;
     get<HTMLButtonElement>('[data-action="clear-leaderboard"]').hidden =
@@ -97,7 +100,7 @@ export function bindStartScreen(root: HTMLElement): () => void {
       const runDifficulty = returnDialog?.dataset.difficulty;
       filter = isDifficulty(runDifficulty) ? runDifficulty : difficulty;
       get<HTMLSelectElement>('#leaderboard-difficulty').value = filter;
-      get('#leaderboard-status').textContent = '';
+      clearMessage(get('#leaderboard-status'));
       refreshLeaderboard();
     }
     if (name === 'menu') refreshMenu();
@@ -161,9 +164,10 @@ export function bindStartScreen(root: HTMLElement): () => void {
         const cleared = clearLeaderboard(filter);
         get<HTMLDialogElement>('#clear-confirmation').close();
         refreshLeaderboard();
-        get('#leaderboard-status').textContent = cleared
-          ? 'Leaderboard cleared.'
-          : 'Scores could not be cleared. Please try again.';
+        setMessage(
+          get('#leaderboard-status'),
+          cleared ? 'leaderboard.cleared' : 'leaderboard.error',
+        );
       }
     },
     { signal },
@@ -207,6 +211,20 @@ export function bindStartScreen(root: HTMLElement): () => void {
         filter = value;
         refreshLeaderboard();
       }
+    },
+    { signal },
+  );
+  document.addEventListener(
+    'languagechange',
+    () => {
+      root
+        .querySelectorAll<HTMLElement>('[data-result-date]')
+        .forEach((cell) => {
+          cell.textContent = formatResultDate(
+            Number(cell.dataset.resultDate),
+            getLanguage(),
+          );
+        });
     },
     { signal },
   );

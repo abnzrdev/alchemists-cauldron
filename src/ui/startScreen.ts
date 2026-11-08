@@ -1,3 +1,4 @@
+import { message, attribute } from '../i18n/index.ts';
 import { renderPanels } from './panels';
 export { bindStartScreen } from './menu';
 import { renderEnvironment } from './environment';
@@ -7,12 +8,12 @@ import { renderCauldronLiquid } from './cauldron-liquid';
 function counter(label: string, icon: string): string {
   return `
     <div class="counter-slot" data-scale-width="280">
-      <div class="game-counter" role="group" aria-label="${label}">
+      <div class="game-counter" role="group" ${attribute('aria-label', label === 'Time' ? 'common.time' : 'common.score')}>
         <img class="counter-plaque" src="${asset('CarvedPlaque')}" alt="" />
         <img class="counter-inset" src="${asset('InsetPanel')}" alt="" />
         <div class="counter-content">
           <img src="${asset(icon)}" alt="" />
-          <div class="counter-details"><span>${label}</span><output id="game-${label.toLowerCase()}" aria-label="${label}">0</output></div>
+          <div class="counter-details"><span>${message(label === 'Time' ? 'common.time' : 'common.score')}</span><output id="game-${label.toLowerCase()}" ${attribute('aria-label', label === 'Time' ? 'common.time' : 'common.score')}>0</output></div>
         </div>
       </div>
     </div>`;
@@ -32,24 +33,24 @@ function circularControl(label: 'Help' | 'Menu'): string {
       <img class="sparkle-top" src="${asset('SparkleTop')}" alt="" />
       <img class="sparkle-left" src="${asset('SparkleBottomLeft')}" alt="" />
       <img class="sparkle-right" src="${asset('SparkleBottomLeft')}" alt="" />
-    </span><span class="control-label">${label.toUpperCase()}</span>
+    </span><span class="control-label">${message(label === 'Help' ? 'common.help' : 'common.menu')}</span>
   </button>`;
 }
 
 export function renderEmptySlots(start: number): string {
   return Array.from({ length: 3 }, (_, index) => {
     const slot = start + index;
-    return `<article class="ingredient-slot" data-slot-index="${slot}" aria-label="Empty ingredient slot ${slot}">
+    return `<article class="ingredient-slot" data-slot-index="${slot}" ${attribute('aria-label', 'game.emptySlot', { slot })}>
       <!-- Reserved for an accessible expanded detail area during gameplay. -->
       <div class="ingredient-content" hidden>
         <span class="ingredient-icon" data-field="icon"></span>
         <h2 class="ingredient-name" data-field="name"></h2>
         <dl class="ingredient-stats">
-          <div><dt>Temperature</dt><dd data-field="temperature"></dd></div>
-          <div><dt>Density</dt><dd data-field="density"></dd></div>
-          <div><dt>Magic Power</dt><dd data-field="magic-power"></dd></div>
+          <div><dt>${message('common.temperature')}</dt><dd data-field="temperature"></dd></div>
+          <div><dt>${message('common.density')}</dt><dd data-field="density"></dd></div>
+          <div><dt>${message('common.magicPower')}</dt><dd data-field="magic-power"></dd></div>
         </dl>
-        <output class="ingredient-stock" data-field="stock" aria-label="Stock"></output>
+        <output class="ingredient-stock" data-field="stock" ${attribute('aria-label', 'game.stock')}></output>
       </div>
     </article>`;
   }).join('');
@@ -61,7 +62,7 @@ export function renderStartScreen(): string {
     <header class="game-header">
       ${counter('Time', 'Hourglass')}
       <div class="title-slot" data-scale-width="545.6"><div class="game-title">
-        <span class="title-star" aria-hidden="true">✦</span><h1>Alchemist’s Cauldron</h1>
+        <span class="title-star" aria-hidden="true">✦</span><h1>${message('common.title')}</h1>
         <img class="title-flask" src="${asset('FlaskConical')}" alt="" />
         <div class="title-flourish" aria-hidden="true">
           <img class="flourish-vine flourish-vine-left" src="${asset('LeftVine')}" alt="" />
@@ -73,12 +74,12 @@ export function renderStartScreen(): string {
       </div></div>
       ${counter('Score', 'Compass')}
     </header>
-    <section class="cauldron-hero" aria-label="Alchemist’s cauldron">
+    <section class="cauldron-hero" ${attribute('aria-label', 'common.cauldron')}>
       <div class="hero-art" data-scale-width="600"><div class="hero-composition">
         ${renderCauldronLiquid()}
         <div class="cauldron-content" aria-hidden="true"></div>
         <div class="cauldron-effects" aria-hidden="true"></div>
-        <img class="cauldron" src="${asset('Cauldron', 'png')}" alt="Empty engraved bronze cauldron" />
+        <img class="cauldron" src="${asset('Cauldron', 'png')}" ${attribute('alt', 'game.cauldronAlt')} />
         <img class="cauldron-front-rim" src="${asset('Cauldron', 'png')}" alt="" aria-hidden="true" draggable="false" />
       </div></div>
     </section>
@@ -87,13 +88,13 @@ export function renderStartScreen(): string {
         <img class="start-plaque" src="${asset('StartPlaque')}" alt="" />
         <img class="start-inset" src="${asset('StartInset')}" alt="" />
         <span class="start-seal" aria-hidden="true"></span><span class="start-seal-center" aria-hidden="true"></span>
-        <span class="start-label">Start Game</span>
+        <span class="start-label">${message('common.start')}</span>
       </button>
     </div></div>
-    <section class="ingredient-slots" aria-label="Ingredient inventory">
+    <section class="ingredient-slots" ${attribute('aria-label', 'game.inventory')}>
       <div class="slot-group slot-group-left">${renderEmptySlots(1)}</div><div class="slot-group slot-group-right">${renderEmptySlots(4)}</div>
     </section>
-    <nav class="secondary-controls" aria-label="Game controls">${circularControl('Help')}${circularControl('Menu')}</nav>
+    <nav class="secondary-controls" ${attribute('aria-label', 'game.controls')}>${circularControl('Help')}${circularControl('Menu')}</nav>
     ${renderPanels()}
   </main>`;
 }
