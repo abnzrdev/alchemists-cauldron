@@ -1,4 +1,14 @@
 export const en = {
+  pwa: {
+    installing:
+      'Preparing offline files? Keep the game open until caching finishes.',
+    ready: 'Offline files are ready on this device.',
+    update: 'Update downloaded. Close all game windows, then reopen to use it.',
+    error:
+      'Offline setup failed. The game still works online; reconnect and reload to retry.',
+    unavailable:
+      'Offline files are not ready. Connect to the internet and reload to retry.',
+  },
   common: {
     title: 'Alchemist’s Cauldron',
     cauldron: 'Alchemist’s cauldron',
