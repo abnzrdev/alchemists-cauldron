@@ -127,7 +127,8 @@ Manual acceptance checklist:
 Native-speaker review is advisable for all three translations, especially Amharic
 fantasy/alchemy terminology and Kazakh phrasing. Translations were authored directly;
 no dedicated translation MCP service was configured. Manual layout and linguistic
-review remain pending. PWA installation and guaranteed offline launch are future work.
+review remain pending. PWA installation and offline launch are documented separately
+in [pwa-offline.md](pwa-offline.md).
 
 ## Five-to-ten-minute presentation
 
