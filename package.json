@@ -7,7 +7,7 @@
     "dev": "vite",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node scripts/build-pwa.mjs",
     "preview": "vite preview",
     "prepare": "husky",
     "test:unit": "node --test tests/*.test.mjs",

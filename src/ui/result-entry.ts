@@ -1,3 +1,4 @@
+import { setMessage, clearMessage } from '../i18n/index.ts';
 import type { Difficulty } from '../data/difficulty.ts';
 import { loadLeaderboard } from '../storage/leaderboard.ts';
 import { isPlayerName, qualifies, saveResult } from '../storage/leaderboard.ts';
@@ -18,8 +19,7 @@ export function mountResultEntry(root: HTMLElement): {
       if (!pending) return;
       const name = input.value.trim();
       if (!isPlayerName(name)) {
-        feedback.textContent =
-          'Use 2-15 characters: letters, digits, spaces, _ or -.';
+        setMessage(feedback, 'result.invalid');
         input.setAttribute('aria-invalid', 'true');
         input.focus();
         return;
@@ -34,18 +34,16 @@ export function mountResultEntry(root: HTMLElement): {
       ) {
         form.hidden = true;
         pending = null;
-        feedback.textContent =
-          'The Top 10 changed. This result no longer qualifies.';
+        setMessage(feedback, 'result.changed');
         return;
       }
       if (!saveResult({ ...pending, name }, pending.difficulty)) {
-        feedback.textContent =
-          'Your score could not be saved. Storage may be unavailable. Try again or continue without saving.';
+        setMessage(feedback, 'result.error');
         return;
       }
       pending = null;
       form.hidden = true;
-      feedback.textContent = 'Result saved to the selected difficulty Top 10.';
+      setMessage(feedback, 'result.saved');
     },
     { signal: abort.signal },
   );
@@ -54,7 +52,7 @@ export function mountResultEntry(root: HTMLElement): {
       pending = { score, date: Date.now(), difficulty };
       form.reset();
       input.removeAttribute('aria-invalid');
-      feedback.textContent = '';
+      clearMessage(feedback);
       form.hidden = !qualifies(
         score,
         pending.date,

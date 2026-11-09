@@ -1,3 +1,12 @@
+import {
+  message,
+  attribute,
+  entityKey,
+  ref,
+  setMessage,
+  clearMessage,
+  setAttributeMessage,
+} from '../i18n/index.ts';
 import { bindIngredientDrag } from '../ui/ingredient-drag.ts';
 import { updateCauldronLiquid } from '../ui/cauldron-liquid.ts';
 import { getReactions } from '../data/reactions.ts';
@@ -76,10 +85,9 @@ export function mountGame(root: HTMLElement): () => void {
     render();
     feedback.react(previous, id);
     if (state.lives < previous.lives)
-      get('#brew-feedback').textContent =
-        'Volatile Mix! One life lost; the cauldron was emptied.';
+      setMessage(get('#brew-feedback'), 'game.volatile');
     else if (state.timeLeft < previous.timeLeft)
-      get('#brew-feedback').textContent = 'Steam Burst! Five seconds lost.';
+      setMessage(get('#brew-feedback'), 'game.steam');
     if (finishIfNeeded()) return;
     const same = root.querySelector<HTMLButtonElement>(
       `[data-ingredient="${id}"]:not(:disabled)`,
@@ -107,7 +115,7 @@ export function mountGame(root: HTMLElement): () => void {
     if (!panel) {
       const recipe = document.createElement('section');
       recipe.className = 'recipe-panel';
-      recipe.setAttribute('aria-label', 'Current recipe');
+      setAttributeMessage(recipe, 'aria-label', 'game.recipe');
       get('.cauldron-hero').append(recipe);
       panel = document.createElement('div');
       panel.className = 'run-panel';
@@ -117,11 +125,13 @@ export function mountGame(root: HTMLElement): () => void {
       state.cauldronIngredients,
       getReactions(state.difficulty),
     ).active;
-    panel.innerHTML = `<h2 class="recipe-title">${state.activeRecipe.name}</h2>${renderMixture(state)}<p class="reaction-status" role="status">${active.length ? `Active: ${active.map((item) => item.name).join(', ')}` : ''}</p>`;
+    panel.innerHTML = `<h2 class="recipe-title">${message(entityKey('recipes', state.activeRecipe.id))}</h2>${renderMixture(state)}<p class="reaction-status" role="status">${active.length ? message('game.active', { reactions: active.map((item) => ref(entityKey('reactions', item.id))) }) : ''}</p>`;
     get('#game-score').textContent = String(state.score);
     updateTime();
-    get('#game-lives').textContent =
-      `Lives: ${state.lives} / ${DIFFICULTY_SETTINGS[state.difficulty].lives}`;
+    setMessage(get('#game-lives'), 'game.lives', {
+      count: state.lives,
+      total: DIFFICULTY_SETTINGS[state.difficulty].lives,
+    });
     get<HTMLButtonElement>('[data-action="brew"]').disabled =
       !state.cauldronIngredients.length || state.status !== 'playing';
     get<HTMLButtonElement>('[data-action="pour-out"]').disabled =
@@ -133,9 +143,8 @@ export function mountGame(root: HTMLElement): () => void {
     if (!state) return;
     lastSavedSecond = Math.ceil(state.timeLeft);
     const saved = saveGame(state);
-    get('#save-status').textContent = saved
-      ? ''
-      : 'Progress could not be saved on this device.';
+    if (saved) clearMessage(get('#save-status'));
+    else setMessage(get('#save-status'), 'game.saveError');
   }
 
   function updateTime(): void {
@@ -160,7 +169,14 @@ export function mountGame(root: HTMLElement): () => void {
       root
         .querySelectorAll<HTMLDialogElement>('dialog[open]')
         .forEach((open) => open.close());
-      get('#game-over-reason').textContent = reason;
+      setMessage(
+        get('#game-over-reason'),
+        reason === 'Time is up'
+          ? 'game.timeUp'
+          : reason === 'No lives left'
+            ? 'game.livesOut'
+            : 'game.ingredientsOut',
+      );
       get('#final-score').textContent = String(state.score);
       results.prepare(state.score, state.difficulty);
       dialog.dataset.difficulty = state.difficulty;
@@ -237,13 +253,12 @@ export function mountGame(root: HTMLElement): () => void {
     clock = new RunClock(state.timeLeft);
     get('#game-time').parentElement?.insertAdjacentHTML(
       'beforeend',
-      `<progress id="time-progress" class="time-progress" max="${DIFFICULTY_SETTINGS[difficulty].startTime}" value="${state.timeLeft}" aria-label="Remaining time"></progress>`,
+      `<progress id="time-progress" class="time-progress" max="${DIFFICULTY_SETTINGS[difficulty].startTime}" value="${state.timeLeft}" ${attribute('aria-label', 'game.remaining')}></progress>`,
     );
     if (!saved) timer = setInterval(tick, 100);
     screen.classList.add('is-running');
     menuButton.disabled = true;
-    primary.innerHTML =
-      '<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">Select ingredients from the shelf.</p><button class="run-button brew-button" type="button" data-action="brew" disabled>Brew</button><button class="run-button" type="button" data-action="pour-out" disabled>Pour Out</button><button class="run-button" type="button" data-action="pause">Pause</button><button class="run-button" type="button" data-action="exit-run">Return to Menu</button></div>';
+    primary.innerHTML = `<div class="run-primary"><p id="game-lives" aria-live="polite"></p><p class="save-status" id="save-status" role="status"></p><p id="brew-feedback" role="status">${message('game.select')}</p><button class="run-button brew-button" type="button" data-action="brew" disabled>${message('common.brew')}</button><button class="run-button" type="button" data-action="pour-out" disabled>${message('common.pour')}</button><button class="run-button" type="button" data-action="pause">${message('common.pause')}</button><button class="run-button" type="button" data-action="exit-run">${message('common.returnMenu')}</button></div>`;
     render();
     persist();
     if (saved) {
@@ -356,8 +371,7 @@ export function mountGame(root: HTMLElement): () => void {
         clock?.reset(state.timeLeft);
         persist();
         render();
-        get('#brew-feedback').textContent =
-          'Cauldron emptied. Ten seconds lost; stock stays spent.';
+        setMessage(get('#brew-feedback'), 'game.emptied');
         finishIfNeeded();
         return;
       }
@@ -371,12 +385,17 @@ export function mountGame(root: HTMLElement): () => void {
         persist();
         clock?.reset(state.timeLeft);
         render();
-        get('#brew-feedback').textContent =
-          outcome.result === 'success'
-            ? `Potion brewed! +${DIFFICULTY_SETTINGS[state.difficulty].scorePerBrew} points and +${DIFFICULTY_SETTINGS[state.difficulty].timeBonus} seconds (maximum ${DIFFICULTY_SETTINGS[state.difficulty].startTime}).`
-            : state.lives
-              ? 'The brew failed. One life lost. Try a new mixture.'
-              : 'No lives remain. Return to the menu to start again.';
+        if (outcome.result === 'success')
+          setMessage(get('#brew-feedback'), 'game.success', {
+            points: DIFFICULTY_SETTINGS[state.difficulty].scorePerBrew,
+            seconds: DIFFICULTY_SETTINGS[state.difficulty].timeBonus,
+            maximum: DIFFICULTY_SETTINGS[state.difficulty].startTime,
+          });
+        else
+          setMessage(
+            get('#brew-feedback'),
+            state.lives ? 'game.failure' : 'game.noLives',
+          );
         if (outcome.result !== 'ignored') feedback.play(outcome.result);
         if (finishIfNeeded()) return;
         root
