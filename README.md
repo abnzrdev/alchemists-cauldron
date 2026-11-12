@@ -1,12 +1,10 @@
 # Alchemist's Cauldron
 
-Artwork review branch: `feat/ingredient-art-potion-liquid`. This follow-up is not published until owner approval. It uses the ten supplied optimized `web-ready/` WebPs from `alchemists-cauldron-ingredient-and-liquid-assets.zip`: eight standalone ingredient illustrations in `public/assets/ingredients/`, plus the emerald liquid and success splash in `public/assets/effects/`. Ingredient buttons retain their native interactions, readable information and accessible names. Start Screen slots remain empty and unchanged. The superseded ingredient SVG and success texture are removed.
+Browser potion game built with TypeScript, Vite, SCSS, and native DOM components. Combine ingredients to match recipe targets before time or lives run out. Difficulty, chemical reactions, saved runs, and leaderboards are stored locally.
 
-The liquid appears only for a nonempty mixture, including paused continuation, and disappears after brewing, pouring out or a reaction that empties the cauldron. A clipped foreground layer reuses the existing cauldron image URL to keep its front rim above the liquid; no duplicate cauldron file is added. Gentle CSS ripples and bubbles pause with the run and respect reduced motion. The new splash plays only after a successful brew. Failure and chemical-reaction textures remain unchanged, as do game rules and save data.
+[Play](https://abnzrdev.github.io/alchemists-cauldron/) · [Run locally](#run-locally) · [Verify](#verify)
 
-Success combines inner light, rising bubbles, a summoning circle and golden motes; failure combines the eruption texture with the existing controlled shake. Pressure Spike/Steam Burst use blue steam, Black Ice uses the purple vortex, and Magma Flux/Volatile Mix use red eruption. Visuals observe existing activation transitions without changing game rules, finish through CSS animation events and support reduced motion. Native gameplay cards, readable statistics, stock badges and Help/Menu icons remain intact. Menu hides both Continue and its summary when no valid unfinished save exists; valid continuation still opens paused.
-
-A TypeScript + Vite + SCSS + native DOM game for RS School. Levels 1, 2 and all six Level 3 stories are implemented. The approved modular dark fantasy interface is preserved.
+The deployed creative extension is built from `creative-story`. Game rules, save formats, and deployment workflows are unchanged by this presentation pass. A reviewed gameplay screenshot is still needed at `docs/screenshots/gameplay.webp`.
 
 ## Play
 
@@ -114,3 +112,6 @@ Click or drag a stocked ingredient into the cauldron. Easy/Medium retain directl
 [US 3.1](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.1.md) | [US 3.2](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.2.md) | [US 3.3](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.3.md) | [US 3.4](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.4.md) | [US 3.5](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.5.md) | [US 3.6](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/game-alchemists-cauldron/user_story_3.6.md)
 
 Level 3 adds 115 story points (20 + 15 + 35 + 10 + 20 + 15). The official overview states a maximum of 393; its common-requirements subtotal arithmetic is inconsistent (the Level 1 row lists 170 + 30 + 58 while displaying 228). We retain the official maximum and assess only the additional Level 3 stories here.
+
+
+Presentation refined with [Unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky (CC BY 4.0).

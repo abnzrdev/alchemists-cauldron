@@ -112,7 +112,7 @@ body {
     line-height: 1.12;
     letter-spacing: -1.6px;
     text-align: center;
-    text-shadow: 0 1.24px 1.86px var(--color-title-glow);
+    text-shadow: none;
   }
 }
 
@@ -408,7 +408,7 @@ body {
 
 .control-label {
   font: 600 18px / normal tokens.$font-body;
-  letter-spacing: 2px;
+  letter-spacing: normal;
 }
 
 .menu-icon {
