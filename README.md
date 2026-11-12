@@ -113,5 +113,4 @@ Click or drag a stocked ingredient into the cauldron. Easy/Medium retain directl
 
 Level 3 adds 115 story points (20 + 15 + 35 + 10 + 20 + 15). The official overview states a maximum of 393; its common-requirements subtotal arithmetic is inconsistent (the Level 1 row lists 170 + 30 + 58 while displaying 228). We retain the official maximum and assess only the additional Level 3 stories here.
 
-
 Presentation refined with [Unslop](https://github.com/heydamir/unslop) by Damir Sokolovsky (CC BY 4.0).
